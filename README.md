@@ -1,9 +1,9 @@
 # Straddle Finance
 ---
 
+Of interest:
 
-
-
+- `contracts/Straddle.sol`
 
 ## Hardhat Sample
 

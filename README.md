@@ -1,5 +1,4 @@
 # Straddle Finance
----
 
 Of interest:
 

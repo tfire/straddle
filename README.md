@@ -4,6 +4,18 @@ Of interest:
 
 - `contracts/Straddle.sol`
 
+## Setup
+
+```
+npm install --save-dev hardhat
+
+(possibly, if you get ERR_OSSL_EVP_UNSUPPORTED)
+
+nvm install --lts
+nvm use --lts
+hardhat test
+```
+
 ## Hardhat Sample
 
 Try running some of the following tasks:

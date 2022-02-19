@@ -36,9 +36,9 @@ mapping(address => Lock[]) user_locks;
 function deposit(amount, lock_tier){
   // insert deposit functionality
 
-  lock(0) // create a lock of tier 0 to reflect the deposit itself
+  lock(amount, 0) // create a lock of tier 0 to reflect the deposit itself
   if lock_tier > 0:
-    lock(lock_tier) // create timelock 
+    lock(amount, lock_tier) // create timelock 
 }
 
 function lock(amount, lock_tier){
@@ -51,10 +51,6 @@ function lock(amount, lock_tier){
 }
 
 function calculateRewards(address user) {
-  1 or 2:
-  1- get all the locks that are not expired
-  2- get all the locks expired or not
-
   uint total_reward = 0;
   for lock in user_locks[user]:
     uint distributions_value = 0;

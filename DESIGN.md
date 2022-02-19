@@ -4,6 +4,8 @@ An example of a stake with no timelock. This would still create a Lock object bu
 
 There is a benefit of simplicity to doing it this way. By treating stakes w/o lock and stakes w/ lock the same, a tier-0 lock can account for the primary reward (eg. 50% in first pass of tokenomics outline) and a tier-n lock can account for the complementary remainder.
 
+If a lock expires, the user needs to continue being rewarded for their unlocked-stake. And this handles that.
+
 ```
 reward = 
 Lock-0.amt_staked * ∑ 1-n (as K) [ Dist-K.amt_reward / Dist-K.total_staked ]
@@ -21,6 +23,7 @@ struct Distribution {
   uint amt_reward;
   uint total_staked;
 }
+Distribution[] distributions;
 
 struct Lock {
   uint start_time;
@@ -31,10 +34,11 @@ struct Lock {
 mapping(address => Lock[]) user_locks;
 
 function deposit(amount, lock_tier){
-  // deposit functionality
+  // insert deposit functionality
 
-  lock(0)
-  lock(lock_tier)
+  lock(0) // create a lock of tier 0 to reflect the deposit itself
+  if lock_tier > 0:
+    lock(lock_tier) // create timelock 
 }
 
 function lock(amount, lock_tier){
@@ -51,9 +55,16 @@ function calculateRewards(address user) {
   1- get all the locks that are not expired
   2- get all the locks expired or not
 
+  uint total_reward = 0;
   for lock in user_locks[user]:
-    
+    uint distributions_value = 0;
+    for dist in distributions:
+      if dist.time >= lock.start_time and dist.time <= lock.end_time:
+        distributions_value += amt_reward / total_staked;
 
+    total_reward += lock.amt_staked * distributions_value;        
+
+  return total_reward;
 }
 
 ```

@@ -8,7 +8,7 @@ import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 
-contract Straddle2 is Context, Ownable, ERC20("Straddle", "STRAD") {
+contract Straddle is Context, Ownable, ERC20("Straddle", "STRAD") {
 
     uint constant YEAR_3000 = 32503680000;
     uint constant MAX_SUPPLY = 10000000;

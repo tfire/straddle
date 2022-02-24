@@ -6,7 +6,7 @@ import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 
-contract Straddle is Context, Ownable, ERC20("Straddle", "STRAD") {
+contract StraddleV001 is Context, Ownable, ERC20("Straddle", "STRAD") {
 
     mapping(address => uint) private _depositBalance; // in STRAD
 

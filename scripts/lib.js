@@ -6,7 +6,7 @@ async function getOwnerOther() {
 }
 
 async function deploy() {
-    const StraddleFactory = await ethers.getContractFactory("Straddle2");
+    const StraddleFactory = await ethers.getContractFactory("Straddle");
     const straddle = await StraddleFactory.deploy();
 
     return straddle;
@@ -18,3 +18,4 @@ async function deploy() {
 }
 
 module.exports = { deploy, getOwnerOther };
+

@@ -44,6 +44,7 @@ contract Straddle is Context, Ownable, ERC20("Straddle", "STRAD") {
 
         // transfer here requires erc20 approval
         _transfer(_msgSender(), address(this), amount);
+        userAccounts[msg.sender].depositBalance += amount;
 
         // create a "lock" for the base reward (tier 0)
         // this is not time-locked but reflects a deposit

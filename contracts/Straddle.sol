@@ -73,6 +73,26 @@ contract Straddle is Context, Ownable, ERC20("Straddle", "STRAD") {
         return userAccounts[user].depositBalance;
     }
 
+    function _lockIsActive(Lock storage lock) internal view returns (bool) {
+        if (block.timestamp < lock.endTime && lock.tier > 0) {
+            return true;
+        }
+        return false;
+    }
+
+    function getUserLockedBalance(address user) public view returns (uint) {
+        uint lockedBalance = 0;
+
+        for (uint i = 0; i < userLocks[user].length; i++) {
+            Lock storage lock = userLocks[user][i];
+            if (_lockIsActive(lock)) {
+                lockedBalance += lock.stakedAmount;
+            }
+        }
+
+        return lockedBalance;
+    }
+
     function calculateRewards(address user) public view returns (uint) {
         uint totalReward = 0;
         for (uint i = 0; i < userLocks[user].length; i++) {

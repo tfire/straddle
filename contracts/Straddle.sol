@@ -60,6 +60,12 @@ contract Straddle is Context, Ownable, ERC20("Straddle", "STRAD") {
     }
 
     function _lock(uint amount, uint lockTier) internal {
+        uint deposited = getUserDepositBalance(msg.sender);
+        uint locked = getUserLockedBalance(msg.sender);
+        uint unlocked = deposited - locked;
+
+        require(amount <= unlocked, "attempted lock amount exceeds deposits available for locking");
+
         uint unlock_at = block.timestamp + (lockTier * 12 weeks);
         Lock memory lock = Lock(block.timestamp, unlock_at, amount, lockTier);
         userLocks[msg.sender].push(lock);

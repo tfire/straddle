@@ -28,6 +28,12 @@ contract Straddle is Context, Ownable, ERC20("Straddle", "STRAD") {
     }
     mapping(address => Lock[]) userLocks;
 
+    struct Account {
+        // The total STRAD an account has in deposit.
+        uint depositBalance;
+    }
+    mapping(address => Account) userAccounts;
+
     constructor() {
         _mint(msg.sender, MAX_SUPPLY);
     }
@@ -56,6 +62,14 @@ contract Straddle is Context, Ownable, ERC20("Straddle", "STRAD") {
         uint unlock_at = block.timestamp + (lockTier * 12 weeks);
         Lock memory lock = Lock(block.timestamp, unlock_at, amount, lockTier);
         userLocks[msg.sender].push(lock);
+    }
+
+    function getUsersLocks(address user) public view returns (Lock[] memory) {
+        return userLocks[user];
+    }
+
+    function getUserDepositBalance(address user) public view returns (uint) {
+        return userAccounts[user].depositBalance;
     }
 
     function calculateRewards(address user) public view returns (uint) {

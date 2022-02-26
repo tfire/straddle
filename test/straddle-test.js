@@ -58,7 +58,6 @@ describe("Token Transfer Test", function() {
         // Trying to lock a million and 1 fails, only a million tokens have been deposited.
         await expect(straddle.connect(other).createLock(1000001, 1)).to.be.revertedWith("attempted lock amount exceeds deposits available for locking");
 
-        // await expect(straddle.connect(other).createLock(1000000, 1));
         result = await straddle.connect(other).createLock(500000, 1);
         print(result)
         

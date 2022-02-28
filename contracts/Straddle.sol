@@ -102,7 +102,7 @@ contract Straddle is Context, Ownable, ERC20("Straddle", "STRAD") {
     function calculateRewards(address user) public view returns (uint) {
         uint totalReward = 0;
         for (uint i = 0; i < userLocks[user].length; i++) {
-            
+
             Lock memory lock = userLocks[user][i];
             uint totalDistributionsEmittedDuringThisLock = 0;
 
@@ -114,14 +114,27 @@ contract Straddle is Context, Ownable, ERC20("Straddle", "STRAD") {
                     // for each distribution during the lock.
                     // This is the mathematical implementation of the concept in
                     // Scalable Reward Distribution on the Ethereum Blockchain; Botag, Boca, and Johnson
-                    // https://uploads-ssl.webflow.com/5ad71ffeb79acc67c8bcdaba/5ad8d1193a40977462982470_scalable-reward-distribution-paper.pdf 
+                    // https://uploads-ssl.webflow.com/5ad71ffeb79acc67c8bcdaba/5ad8d1193a40977462982470_scalable-reward-distribution-paper.pdf
                     totalDistributionsEmittedDuringThisLock += distribution.rewardAmount / distribution.stakedTotal;
                 }
             }
 
             totalReward += lock.stakedAmount * totalDistributionsEmittedDuringThisLock;
         }
-        
+
         return totalReward;
+    }
+
+    function withdraw(uint withdrawAmount) public {
+        uint deposited = getUserDepositBalance(msg.sender);
+        uint locked = getUserLockedBalance(msg.sender);
+        require(deposited > 0, "No funds to withdraw");
+
+        uint availableToWithdraw = deposited - locked;
+        require(availableToWithdraw > 0, "No unlocked funds available to withdraw");
+
+        userAccounts[msg.sender].depositBalance -= withdrawAmount;
+
+        _transfer(address(this), _msgSender(), withdrawAmount);
     }
 }

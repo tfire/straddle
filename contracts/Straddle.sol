@@ -132,9 +132,9 @@ contract Straddle is Context, Ownable, ERC20("Straddle", "STRAD") {
 
         uint availableToWithdraw = deposited - locked;
         require(availableToWithdraw > 0, "No unlocked funds available to withdraw");
+        require(availableToWithdraw >= withdrawAmount, "Amount to withdraw exceeds available funds");
 
         userAccounts[msg.sender].depositBalance -= withdrawAmount;
-
         _transfer(address(this), _msgSender(), withdrawAmount);
     }
 }

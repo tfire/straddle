@@ -73,7 +73,10 @@ describe("Token Transfer Test", function() {
         expect(await straddle.balanceOf(other.address)).to.equal(500_000); // balance half
         await expect(straddle.connect(other).withdraw(500_001)).to.be.revertedWith("Amount to withdraw exceeds available funds");
 
-        await straddle.connect(other).createLock(500_000, 1); // lock half
+        await straddle.connect(other).createLock(400_000, 1); // lock more
+        await expect(straddle.connect(other).withdraw(500_001)).to.be.revertedWith("Amount to withdraw exceeds available funds");
+        await straddle.connect(other).withdraw(100_000); // withdraw all avaialble
+
         await expect(straddle.connect(other).withdraw(500_000)).to.be.revertedWith("No unlocked funds available to withdraw");
     });
 

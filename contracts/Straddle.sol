@@ -43,7 +43,7 @@ contract Straddle is Context, Ownable, ERC20("Straddle", "STRAD") {
         require(lock_tier <= 4, "Invalid Lock Tier.");
 
         // transfer here requires erc20 approval
-        _transfer(_msgSender(), address(this), amount);
+        _transfer(msg.sender, address(this), amount);
         userAccounts[msg.sender].depositBalance += amount;
 
         // create a "lock" for the base reward (tier 0)
@@ -125,16 +125,16 @@ contract Straddle is Context, Ownable, ERC20("Straddle", "STRAD") {
         return totalReward;
     }
 
-    function withdraw(uint withdrawAmount) public {
+    function withdraw(uint amount) public {
         uint deposited = getUserDepositBalance(msg.sender);
         uint locked = getUserLockedBalance(msg.sender);
         require(deposited > 0, "No funds to withdraw");
 
         uint availableToWithdraw = deposited - locked;
         require(availableToWithdraw > 0, "No unlocked funds available to withdraw");
-        require(availableToWithdraw >= withdrawAmount, "Amount to withdraw exceeds available funds");
+        require(availableToWithdraw >= amount, "Amount to withdraw exceeds available funds");
 
-        userAccounts[msg.sender].depositBalance -= withdrawAmount;
-        _transfer(address(this), _msgSender(), withdrawAmount);
+        userAccounts[msg.sender].depositBalance -= amount;
+        _transfer(address(this), msg.sender, amount);
     }
 }

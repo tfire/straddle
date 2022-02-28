@@ -7,7 +7,15 @@ Of interest:
 ## Setup
 
 ```
-npm install --save-dev hardhat
+npm install
+```
+
+
+Minimum necessary manual installations:
+```
+npm install --save-dev @openzeppelin/contracts
+npm install --save-dev @nomiclabs/hardhat-waffle
+npm install --save-dev chai
 
 (possibly, if you get ERR_OSSL_EVP_UNSUPPORTED)
 

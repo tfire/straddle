@@ -24,6 +24,14 @@ nvm use --lts
 hardhat test
 ```
 
+Pro tip:
+```
+vim ~/.zshrc
+
+alias hardhat="npx hardhat"
+alias hh="hardhat"
+```
+
 ## Hardhat Sample
 
 Try running some of the following tasks:

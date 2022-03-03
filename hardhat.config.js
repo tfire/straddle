@@ -13,6 +13,11 @@ task("accounts", "Prints the list of accounts", async (taskArgs, hre) => {
 // You need to export an object to set up your config
 // Go to https://hardhat.org/config/ to learn more
 
+let alchemyToken = process.env.ALCHEMY_TOKEN;
+if (process.env.ALCHEMY_TOKEN === undefined) {
+    alchemyToken = "";
+}
+
 /**
  * @type import('hardhat/config').HardhatUserConfig
  */
@@ -22,7 +27,7 @@ module.exports = {
     hardhat: {
       forking: {
         enabled: true,
-        url: `https://eth-mainnet.alchemyapi.io/v2/${process.env.ALCHEMY_TOKEN}`,
+        url: `https://eth-mainnet.alchemyapi.io/v2/${alchemyToken}`,
       },
     },
   },

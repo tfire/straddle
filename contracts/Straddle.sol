@@ -11,7 +11,10 @@ import "@openzeppelin/contracts/access/Ownable.sol";
 contract Straddle is Context, Ownable, ERC20("Straddle", "STRAD") {
 
     uint constant YEAR_3000 = 32503680000;
-    uint constant MAX_SUPPLY = 10000000;
+    uint constant MAX_SUPPLY = 10_000_000;
+
+    // USDC: 0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48
+    IERC20 USDC = IERC20(0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48);
 
     struct Distribution {
       uint time;
@@ -38,6 +41,29 @@ contract Straddle is Context, Ownable, ERC20("Straddle", "STRAD") {
         _mint(msg.sender, MAX_SUPPLY);
     }
 
+    function distribute(uint usdcAmount) public onlyOwner {
+        // Another more complicated implementation would involve a pool of USDC for staging
+        // the next distribution and another pool of USDC containing already-distributed rewards.
+        // The benefit to doing it this way would be that multiple Straddle Finance farming addresses
+        // could contribute to the rewards distribution instead of having to consolidate the funds to
+        // a single wallet before calling this function to distribute.
+
+        // Requires ERC-20 approval
+        USDC.transferFrom(msg.sender, address(this), usdcAmount);
+
+        // The staked total is used to compute the rewards per user.
+        // as to how the stakedTotal allows for correct reward distribution when it does not
+        // take into account time-lock weights, let me explain:
+        // - tier-0 locks get created upon deposit w/ or w/o an actual time component to the lock. 
+        // - tier-0 lock is just staking to the contract. withdrawable at any point. 
+        // - tier-0 results in 50% of the reward pool by stake weight against stakedTotal
+        // - tier-2 lock results in additional 20% of reward pool by stake weight against stakedTotal
+        // - therefore by separating the lock tiers & combining the reward rates, 
+        //     we don't have to weight the quotient of stake/stakedTotal.
+        uint stakedTotal = balanceOf(address(this));
+        distributions.push(Distribution(block.timestamp, usdcAmount, stakedTotal));
+    }
+
     function deposit(uint amount, uint lock_tier) public {
 
         require(lock_tier <= 4, "Invalid Lock Tier.");
@@ -47,7 +73,7 @@ contract Straddle is Context, Ownable, ERC20("Straddle", "STRAD") {
         userAccounts[msg.sender].depositBalance += amount;
 
         // create a "lock" for the base reward (tier 0)
-        // this is not time-locked but reflects a deposit
+        // this is not time-locked but reflects a deposit/stake
         _lock(amount, 0);
 
         if (lock_tier > 0) {

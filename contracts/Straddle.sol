@@ -14,7 +14,7 @@ contract Straddle is Context, Ownable, ERC20("Straddle", "STRAD") {
     uint constant MAX_SUPPLY = 10_000_000;
 
     // USDC: 0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48
-    IERC20 USDC = IERC20(0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48);
+    IERC20 constant USDC = IERC20(0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48);
 
     struct Distribution {
       uint time;

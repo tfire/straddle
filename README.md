@@ -1,8 +1,8 @@
 # Straddle Finance
 
-Of interest:
+Here we are using the following:
 
-- `contracts/Straddle.sol`
+Github Actions + Hardhat + Alchemy = Instant CI with Mainnet Forking
 
 ## Setup
 
@@ -31,6 +31,7 @@ vim ~/.zshrc
 alias hardhat="npx hardhat"
 alias hh="hardhat"
 ```
+
 
 ## Hardhat Sample
 

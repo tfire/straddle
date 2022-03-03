@@ -27,9 +27,13 @@ jobs:
     # - run: npx hardhat test
 
     steps:
+      - uses: actions/checkout@v2
       - name: Setup
-        shell: bash
-        run: npm install
+        uses: actions/setup-node@v2
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: 'npm'
+      - run: npm install
       - name: Run tests
         shell: bash
         env:

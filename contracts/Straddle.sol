@@ -97,6 +97,10 @@ contract Straddle is Context, Ownable, ERC20("Straddle", "STRAD") {
         userLocks[msg.sender].push(lock);
     }
 
+    function getDistributions() public view returns (Distribution[] memory) {
+        return distributions;
+    }
+
     function getUsersLocks(address user) public view returns (Lock[] memory) {
         return userLocks[user];
     }

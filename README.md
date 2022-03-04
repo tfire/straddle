@@ -1,4 +1,4 @@
-# Straddle Finance
+# Straddle
 
 Here we are using the following:
 

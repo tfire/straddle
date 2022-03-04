@@ -2,7 +2,13 @@
 const { expect, assert } = require("chai");
 const { ethers } = require("hardhat");
 
-const { deploy, getOwnerOther } = require("../scripts/lib");
+const { 
+    deploy, 
+    getOwnerOther, 
+    getUsdcContract, 
+    setupFunds,
+    USDC_DECIMAL
+} = require("../scripts/lib");
 
 const VERBOSE_LOGGING = true;
 
@@ -25,6 +31,8 @@ describe("Contract Deployment Test", function() {
 });
 
 describe("Token Transfer Test", function() {
+    setupFunds();
+
     beforeEach(async function() {
         straddle = await deploy();
         [owner, other] = await getOwnerOther();
@@ -35,7 +43,7 @@ describe("Token Transfer Test", function() {
         expect(await straddle.balanceOf(other.address)).to.equal(1_000_000);
     });
 
-    it("should deposit from other should create locks tier-0, tier-1", async function() {
+    it("should deposit from address(other); should create tier-0, tier-1 locks", async function() {
         await straddle.transfer(other.address, 1_000_000); // 1,000,000
         expect(await straddle.balanceOf(other.address)).to.equal(1_000_000);
 
@@ -78,6 +86,19 @@ describe("Token Transfer Test", function() {
         await straddle.connect(other).withdraw(100_000); // withdraw all avaialble
 
         await expect(straddle.connect(other).withdraw(500_000)).to.be.revertedWith("No unlocked funds available to withdraw");
+    });
+
+    it("should create distributions", async function() {
+        let distributions = await straddle.getDistributions();
+        assert(distributions.length == 0);
+        
+        const usdc = await getUsdcContract(owner);
+        await usdc.approve(straddle.address, ethers.utils.parseEther("1"));
+        
+        await straddle.distribute(ethers.BigNumber.from(10_000).mul(USDC_DECIMAL));
+        distributions = await straddle.getDistributions();
+
+        assert(distributions.length == 1);
     });
 
     // tests to write:

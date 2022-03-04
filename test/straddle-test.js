@@ -92,13 +92,22 @@ describe("Token Transfer Test", function() {
         let distributions = await straddle.getDistributions();
         assert(distributions.length == 0);
         
-        const usdc = await getUsdcContract(owner);
+        const usdc = await getUsdcContract(signer=owner);
         await usdc.approve(straddle.address, ethers.utils.parseEther("1"));
         
         await straddle.distribute(ethers.BigNumber.from(10_000).mul(USDC_DECIMAL));
         distributions = await straddle.getDistributions();
 
         assert(distributions.length == 1);
+        assert(distributions[0].rewardAmount == 10_000 * 1000000);
+        assert(await usdc.balanceOf(straddle.address) == 10_000 * 1000000);
+
+        await straddle.distribute(ethers.BigNumber.from(10_000).mul(USDC_DECIMAL));
+        distributions = await straddle.getDistributions();
+
+        assert(distributions.length == 2);
+        assert(distributions[1].rewardAmount == 10_000 * 1000000);
+        assert(await usdc.balanceOf(straddle.address) == 20_000 * 1000000);
     });
 
     // tests to write:

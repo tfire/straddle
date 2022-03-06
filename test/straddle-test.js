@@ -35,7 +35,7 @@ describe("Token Transfer Test", function() {
 
     beforeEach(async function() {
         straddle = await deploy();
-        [owner, other] = await getOwnerOther();
+        [owner, other, other2] = await getOwnerOther();
     });
 
     it("should transfer 1 million tokens from owner to other", async function() {
@@ -99,22 +99,25 @@ describe("Token Transfer Test", function() {
         distributions = await straddle.getDistributions();
 
         assert(distributions.length == 1);
-        assert(distributions[0].rewardAmount == 10_000 * 1000000);
-        assert(await usdc.balanceOf(straddle.address) == 10_000 * 1000000);
+        assert(distributions[0].rewardAmount == 10_000 * USDC_DECIMAL);
+        assert(await usdc.balanceOf(straddle.address) == 10_000 * USDC_DECIMAL);
 
         await straddle.distribute(ethers.BigNumber.from(10_000).mul(USDC_DECIMAL));
         distributions = await straddle.getDistributions();
 
         assert(distributions.length == 2);
-        assert(distributions[1].rewardAmount == 10_000 * 1000000);
-        assert(await usdc.balanceOf(straddle.address) == 20_000 * 1000000);
+        assert(distributions[1].rewardAmount == 10_000 * USDC_DECIMAL);
+        assert(await usdc.balanceOf(straddle.address) == 20_000 * USDC_DECIMAL);
     });
 
     // send a distribution and verify the rewards balance
     it("distributions and rewards", async function() {
-        // other deposits 1 million tokens
-        await straddle.transfer(other.address, 1_000_000);
-        await straddle.connect(other).deposit(1_000_000, 0); // deposit all
+        // other and other2 get half of all tokens
+        // other, and other2 deposit all tokens with max lock
+        await straddle.transfer(other.address, 5_000_000);
+        await straddle.connect(other).deposit(5_000_000, 4);
+        await straddle.transfer(other2.address, 5_000_000);
+        await straddle.connect(other2).deposit(5_000_000, 4);
 
         // create a 10,000 usdc distribution
         const usdc = await getUsdcContract(signer=owner);
@@ -122,7 +125,9 @@ describe("Token Transfer Test", function() {
         await straddle.distribute(ethers.BigNumber.from(10_000).mul(USDC_DECIMAL));
 
         // verify the rewards balance
-        // assert(await straddle.calculateRewards(other.address) == 10_000 * 1000000);
+        // other and other2 should recieve half of the distribution
+        expect(await straddle.calculateRewards(other.address)).to.equal(5_000 * USDC_DECIMAL);
+        expect(await straddle.calculateRewards(other2.address)).to.equal(5_000 * USDC_DECIMAL);
     });
 
     // tests to write:

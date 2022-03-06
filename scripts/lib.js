@@ -9,8 +9,8 @@ const USDC_DECIMAL = 10 ** 6;
 
 async function getOwnerOther() {
     const signers = await ethers.getSigners();
-    const [owner, other] = signers;
-    return [owner, other];
+    const [owner, other, other2] = signers;
+    return [owner, other, other2];
 }
 
 async function getUsdcContract(signer) {
@@ -28,10 +28,10 @@ async function getUsdcContract(signer) {
 async function setupFunds() {
     /**
      * Sends 1 ETH to owner and other.
-     * 
+     *
      * Sends 1,000,000 USDC to owner (for distribution testing).
      */
-    const [owner, other] = await getOwnerOther();
+    const [owner, other, other2] = await getOwnerOther();
     await hre.network.provider.request({
         method: "hardhat_impersonateAccount",
         params: [CRYPTO_DOT_COM],
@@ -49,7 +49,7 @@ async function setupFunds() {
     });
 
     const usdc = await getUsdcContract(signer);
-    
+
     // USDC has 6 decimals. This ends up being a $100,000 transfer.
     const usdcAmount = ethers.BigNumber.from(100_000).mul(USDC_DECIMAL)
     await usdc.transfer(owner.address, usdcAmount);
@@ -64,14 +64,14 @@ async function deploy() {
     // useful syntax when deployment includes multiple contracts:
     // return [straddle, otherDeployment];
     // unpacked on the receiving end like so:
-    // const [straddle, other] = await deploy() 
+    // const [straddle, other] = await deploy()
 }
 
-module.exports = { 
-    deploy, 
-    getOwnerOther, 
-    setupFunds, 
-    getUsdcContract, 
-    USDC_DECIMAL 
+module.exports = {
+    deploy,
+    getOwnerOther,
+    setupFunds,
+    getUsdcContract,
+    USDC_DECIMAL
 };
 

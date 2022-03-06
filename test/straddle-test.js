@@ -2,10 +2,10 @@
 const { expect, assert } = require("chai");
 const { ethers } = require("hardhat");
 
-const { 
-    deploy, 
-    getOwnerOther, 
-    getUsdcContract, 
+const {
+    deploy,
+    getOwnerOther,
+    getUsdcContract,
     setupFunds,
     USDC_DECIMAL
 } = require("../scripts/lib");
@@ -91,10 +91,10 @@ describe("Token Transfer Test", function() {
     it("should create distributions", async function() {
         let distributions = await straddle.getDistributions();
         assert(distributions.length == 0);
-        
+
         const usdc = await getUsdcContract(signer=owner);
         await usdc.approve(straddle.address, ethers.utils.parseEther("1"));
-        
+
         await straddle.distribute(ethers.BigNumber.from(10_000).mul(USDC_DECIMAL));
         distributions = await straddle.getDistributions();
 
@@ -110,8 +110,22 @@ describe("Token Transfer Test", function() {
         assert(await usdc.balanceOf(straddle.address) == 20_000 * 1000000);
     });
 
+    // send a distribution and verify the rewards balance
+    it("distributions and rewards", async function() {
+        // other deposits 1 million tokens
+        await straddle.transfer(other.address, 1_000_000);
+        await straddle.connect(other).deposit(1_000_000, 0); // deposit all
+
+        // create a 10,000 usdc distribution
+        const usdc = await getUsdcContract(signer=owner);
+        await usdc.approve(straddle.address, ethers.utils.parseEther("1"));
+        await straddle.distribute(ethers.BigNumber.from(10_000).mul(USDC_DECIMAL));
+
+        // verify the rewards balance
+        // assert(await straddle.calculateRewards(other.address) == 10_000 * 1000000);
+    });
+
     // tests to write:
-    // - send a distribution and verify the rewards balance
     // - send more distributions
     // - collect rewards
     // - withdraw assets after they unlock

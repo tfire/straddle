@@ -7,8 +7,10 @@ pragma solidity >=0.6.0 <0.9.0;
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
+import "@openzeppelin/contracts/utils/math/SafeMath.sol";
 
 contract Straddle is Context, Ownable, ERC20("Straddle", "STRAD") {
+    using SafeMath for uint;
 
     uint constant YEAR_3000 = 32503680000;
     uint constant MAX_SUPPLY = 10_000_000;
@@ -154,7 +156,9 @@ contract Straddle is Context, Ownable, ERC20("Straddle", "STRAD") {
                 }
             }
 
-            totalReward += lock.stakedAmount * totalDistributionsEmittedDuringThisLockPerStakedStrad;
+            uint stakeAdjustedReward = lock.stakedAmount * totalDistributionsEmittedDuringThisLockPerStakedStrad;
+            uint lockTierAdjustedReward = stakeAdjustedReward.div(10).mul(lock.tier);
+            totalReward += lockTierAdjustedReward;
         }
 
         return totalReward - userAccounts[user].rewardsClaimed;

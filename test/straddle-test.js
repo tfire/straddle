@@ -133,7 +133,7 @@ describe("Token Transfer Test", function() {
         expect(await straddle.calculateRewards(other2.address)).to.equal(5_000 * USDC_DECIMAL);
     });
 
-    xit("claim rewards", async function() {
+    it("claim rewards", async function() {
         await straddle.transfer(other2.address, 5_000_000);
         await straddle.connect(other2).deposit(5_000_000, 4);
 

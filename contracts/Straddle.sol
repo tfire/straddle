@@ -37,6 +37,7 @@ contract Straddle is Context, Ownable, ERC20("Straddle", "STRAD") {
     struct Account {
         // The total STRAD an account has in deposit.
         uint depositBalance;
+        uint rewardsClaimed;
     }
     mapping(address => Account) userAccounts;
 
@@ -60,7 +61,7 @@ contract Straddle is Context, Ownable, ERC20("Straddle", "STRAD") {
         // - tier-2 lock results in additional 20% of reward pool by stake weight against stakedTotal
         // - therefore by separating the lock tiers & combining the reward rates,
         //     we don't have to weight the quotient of stake/stakedTotal.
-        
+
         // Contract's STRAD balance ie. total deposited/staked/locked STRAD
         uint stakedTotal = balanceOf(address(this));
 
@@ -156,7 +157,7 @@ contract Straddle is Context, Ownable, ERC20("Straddle", "STRAD") {
             totalReward += lock.stakedAmount * totalDistributionsEmittedDuringThisLock;
         }
 
-        return totalReward;
+        return totalReward - userAccounts[user].rewardsClaimed;
     }
 
     function withdraw(uint amount) public {
@@ -172,11 +173,11 @@ contract Straddle is Context, Ownable, ERC20("Straddle", "STRAD") {
         _transfer(address(this), msg.sender, amount);
     }
 
-    // Not working correctly, need to do calculateNetRewards()  = calculateAllRewards() - accounts[user].claimed
     function claimRewards() public {
-        uint totalReward = calculateRewards(msg.sender);
-        require(totalReward > 0, "No rewards to claim");
+        uint netReward = calculateRewards(msg.sender);
+        require(netReward > 0, "No rewards to claim");
 
-        USDC.transfer(msg.sender, totalReward);
+        userAccounts[msg.sender].rewardsClaimed += netReward;
+        USDC.transfer(msg.sender, netReward);
     }
 }

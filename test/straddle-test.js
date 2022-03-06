@@ -147,8 +147,11 @@ describe("Token Transfer Test", function() {
         expect(await straddle.calculateRewards(other2.address)).to.equal(10_000 * USDC_DECIMAL);
         expect(await usdc.balanceOf(other2.address)).to.equal(0);
 
+        // claim rewards
         await straddle.connect(other2).claimRewards();
         expect(await usdc.balanceOf(other2.address)).to.equal(10_000 * USDC_DECIMAL);
+
+        // error if user has claimed all rewards
         expect(await straddle.calculateRewards(other2.address)).to.equal(0);
         await expect(straddle.connect(other2).claimRewards()).to.be.revertedWith("No rewards to claim");
     });

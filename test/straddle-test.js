@@ -124,7 +124,8 @@ describe("Token Transfer Test", function() {
         // create a 10,000 usdc distribution
         const usdc = await getUsdcContract(signer=owner);
         await usdc.approve(straddle.address, ethers.utils.parseEther("1"));
-        await straddle.distribute(ethers.BigNumber.from(10_000).mul(USDC_DECIMAL));
+        await straddle.depositRewards(ethers.BigNumber.from(10_000).mul(USDC_DECIMAL));
+        await straddle.distributeRewards();
 
         // verify the rewards balance
         // other and other2 should recieve half of the distribution
@@ -139,7 +140,8 @@ describe("Token Transfer Test", function() {
         // create a 10,000 usdc distribution
         const usdc = await getUsdcContract(signer=owner);
         await usdc.approve(straddle.address, ethers.utils.parseEther("1"));
-        await straddle.distribute(ethers.BigNumber.from(10_000).mul(USDC_DECIMAL));
+        await straddle.depositRewards(ethers.BigNumber.from(10_000).mul(USDC_DECIMAL));
+        await straddle.distributeRewards();
 
         // verify the rewards balance
         expect(await straddle.calculateRewards(other2.address)).to.equal(10_000 * USDC_DECIMAL);

@@ -74,18 +74,18 @@ describe("Token Transfer Test", function() {
     // try withdraw locked assets (fail)
     it("should revert when trying to withdraw locked assets", async function() {
         await straddle.transfer(other.address, 1_000_000);
-        await expect(straddle.connect(other).withdraw(1)).to.be.revertedWith("No funds to withdraw");
+        await expect(straddle.connect(other).withdraw(1)).to.be.revertedWith("No STRAD available to withdraw");
 
         await straddle.connect(other).deposit(1_000_000, 0); // deposit all
         await straddle.connect(other).withdraw(500_000); // withdraw half
         expect(await straddle.balanceOf(other.address)).to.equal(500_000); // balance half
-        await expect(straddle.connect(other).withdraw(500_001)).to.be.revertedWith("Amount to withdraw exceeds available funds");
+        await expect(straddle.connect(other).withdraw(500_001)).to.be.revertedWith("Amount to withdraw exceeds available STRAD");
 
         await straddle.connect(other).createLock(400_000, 1); // lock more
-        await expect(straddle.connect(other).withdraw(500_001)).to.be.revertedWith("Amount to withdraw exceeds available funds");
+        await expect(straddle.connect(other).withdraw(500_001)).to.be.revertedWith("Amount to withdraw exceeds available STRAD");
         await straddle.connect(other).withdraw(100_000); // withdraw all avaialble
 
-        await expect(straddle.connect(other).withdraw(500_000)).to.be.revertedWith("No unlocked funds available to withdraw");
+        await expect(straddle.connect(other).withdraw(500_000)).to.be.revertedWith("No unlocked STRAD available to withdraw");
     });
 
     it("should create distributions", async function() {
@@ -130,9 +130,27 @@ describe("Token Transfer Test", function() {
         expect(await straddle.calculateRewards(other2.address)).to.equal(5_000 * USDC_DECIMAL);
     });
 
+    xit("claim rewards", async function() {
+        await straddle.transfer(other2.address, 5_000_000);
+        await straddle.connect(other2).deposit(5_000_000, 4);
+
+        // create a 10,000 usdc distribution
+        const usdc = await getUsdcContract(signer=owner);
+        await usdc.approve(straddle.address, ethers.utils.parseEther("1"));
+        await straddle.distribute(ethers.BigNumber.from(10_000).mul(USDC_DECIMAL));
+
+        // verify the rewards balance
+        expect(await straddle.calculateRewards(other2.address)).to.equal(10_000 * USDC_DECIMAL);
+        expect(await usdc.balanceOf(other2.address)).to.equal(0);
+
+        await straddle.connect(other2).claimRewards();
+        expect(await usdc.balanceOf(other2.address)).to.equal(10_000 * USDC_DECIMAL);
+        expect(await straddle.calculateRewards(other2.address)).to.equal(0);
+        await expect(straddle.connect(other2).claimRewards()).to.be.revertedWith("No rewards to claim");
+    });
+
     // tests to write:
     // - send more distributions
-    // - collect rewards
     // - withdraw assets after they unlock
     // ...
 });

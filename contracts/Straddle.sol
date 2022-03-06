@@ -167,4 +167,12 @@ contract Straddle is Context, Ownable, ERC20("Straddle", "STRAD") {
         userAccounts[msg.sender].depositBalance -= amount;
         _transfer(address(this), msg.sender, amount);
     }
+
+    // Not working correctly, need to do calculateNetRewards()  = calculateAllRewards() - accounts[user].claimed
+    function claimRewards() public {
+        uint totalReward = calculateRewards(msg.sender);
+        require(totalReward > 0, "No rewards to claim");
+
+        USDC.transfer(msg.sender, totalReward);
+    }
 }

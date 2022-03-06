@@ -32,6 +32,10 @@ alias hardhat="npx hardhat"
 alias hh="hardhat"
 ```
 
+## Todo
+
+- `https://github.com/paulrberg/create-eth-app`
+- `https://github.com/dethcrypto/TypeChain` ?
 
 ## Hardhat Sample
 

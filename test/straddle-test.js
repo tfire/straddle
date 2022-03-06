@@ -30,7 +30,7 @@ describe("Contract Deployment Test", function() {
     });
 });
 
-describe("Token Transfer Test", function() {
+describe("Main Straddle Suite", function() {
     setupFunds();
 
     beforeEach(async function() {

@@ -133,15 +133,18 @@ describe("Main Straddle Suite", function() {
         expect(await straddle.calculateRewards(other2.address)).to.equal(5_000 * USDC_DECIMAL);
     });
 
-    it("claim rewards", async function() {
-        await straddle.transfer(other2.address, 5_000_000);
-        await straddle.connect(other2).deposit(5_000_000, 4);
-
-        // create a 10,000 usdc distribution
+    async function distributeTenThousandUsdc() {
         const usdc = await getUsdcContract(signer=owner);
         await usdc.approve(straddle.address, ethers.utils.parseEther("1"));
         await straddle.depositRewards(ethers.BigNumber.from(10_000).mul(USDC_DECIMAL));
         await straddle.distributeRewards();
+    }
+
+    it("claim rewards", async function() {
+        await straddle.transfer(other2.address, 5_000_000);
+        await straddle.connect(other2).deposit(5_000_000, 4);
+
+        await distributeTenThousandUsdc();
 
         // verify the rewards balance
         expect(await straddle.calculateRewards(other2.address)).to.equal(10_000 * USDC_DECIMAL);

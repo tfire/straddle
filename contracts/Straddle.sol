@@ -7,6 +7,7 @@ import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/utils/math/SafeMath.sol";
+import "hardhat/console.sol";
 
 contract Straddle is Context, Ownable, ERC20("Straddle", "STRAD") {
     using SafeMath for uint;
@@ -50,6 +51,13 @@ contract Straddle is Context, Ownable, ERC20("Straddle", "STRAD") {
         // Requires ERC-20 approval
         USDC.transferFrom(msg.sender, address(this), usdcAmount);
         stagingPoolSizeUsdc += usdcAmount;
+    }
+
+    function withdrawSurplus(uint usdcAmount) public onlyOwner  {
+        // Realized we will end up with a reward surplus in 
+        // the contract of at minimum 10% of what is distributed.
+
+        USDC.transfer(msg.sender, usdcAmount);
     }
 
     function distributeRewards() public onlyOwner {
@@ -145,7 +153,10 @@ contract Straddle is Context, Ownable, ERC20("Straddle", "STRAD") {
             for (uint j; j < distributions.length; j++) {
                 Distribution memory distribution = distributions[j];
 
-                if (distribution.time >= lock.startTime && distribution.time <= lock.endTime) {
+                if (
+                    (distribution.time >= lock.startTime && distribution.time <= lock.endTime)
+                    || (lock.tier == 0)
+                ) {
                     // Summing the quotients of rewards distributed and total staked at distribution time
                     // for each distribution during the lock.
                     // This is the mathematical implementation of the concept in
@@ -158,10 +169,10 @@ contract Straddle is Context, Ownable, ERC20("Straddle", "STRAD") {
             uint stakeAdjustedReward = lock.stakedAmount * totalDistributionsEmittedDuringThisLockPerStakedStrad;
             uint lockTierAdjustedReward;
             if (lock.tier == 0) {
-                // Tier 0 gets 50% rewards
+                // Tier 0 gets 50% of the rewards.
                 lockTierAdjustedReward = stakeAdjustedReward.div(10).mul(5);
             } else {
-                // Tier 1, 2, 3, 4 get 10%, 20%, 30%, 40% additional
+                // Tier 1, 2, 3, 4 get 10%, 20%, 30%, 40% additional, respectively
                 lockTierAdjustedReward = stakeAdjustedReward.div(10).mul(lock.tier);
             }
             totalReward += lockTierAdjustedReward;

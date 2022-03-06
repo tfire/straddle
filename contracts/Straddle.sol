@@ -1,5 +1,4 @@
 
-
 // SPDX-License-Identifier: MIT
 
 pragma solidity >=0.6.0 <0.9.0;
@@ -34,14 +33,14 @@ contract Straddle is Context, Ownable, ERC20("Straddle", "STRAD") {
       uint stakedAmount;
       uint tier; // 0 - 4
     }
-    mapping(address => Lock[]) userLocks;
+    mapping(address => Lock[]) public userLocks;
 
     struct Account {
         // The total STRAD an account has in deposit.
         uint depositBalance;
         uint rewardsClaimed;
     }
-    mapping(address => Account) userAccounts;
+    mapping(address => Account) public userAccounts;
 
     constructor() {
         _mint(msg.sender, MAX_SUPPLY);

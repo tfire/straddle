@@ -16,6 +16,9 @@ contract Straddle is Context, Ownable, ERC20("Straddle", "STRAD") {
     // USDC: 0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48
     IERC20 constant USDC = IERC20(0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48);
 
+    // Tracks the deposited USDC pending the next round of reward distribution.
+    uint public stagingPoolSizeUsdc;
+
     struct Distribution {
       uint time;
       uint rewardAmount;
@@ -41,16 +44,13 @@ contract Straddle is Context, Ownable, ERC20("Straddle", "STRAD") {
         _mint(msg.sender, MAX_SUPPLY);
     }
 
-    function distribute(uint usdcAmount) public onlyOwner {
-        // Another more complicated implementation would involve a pool of USDC for staging
-        // the next distribution and another pool of USDC containing already-distributed rewards.
-        // The benefit to doing it this way would be that multiple Straddle Finance farming addresses
-        // could contribute to the rewards distribution instead of having to consolidate the funds to
-        // a single wallet before calling this function to distribute.
-
+    function depositRewards(uint usdcAmount) public {
         // Requires ERC-20 approval
         USDC.transferFrom(msg.sender, address(this), usdcAmount);
+        stagingPoolSizeUsdc += usdcAmount;
+    }
 
+    function distributeRewards() public onlyOwner {
         // The staked total is used to compute the rewards per user.
         // as to how the stakedTotal allows for correct reward distribution when it does not
         // take into account time-lock weights, let me explain:
@@ -60,12 +60,16 @@ contract Straddle is Context, Ownable, ERC20("Straddle", "STRAD") {
         // - tier-2 lock results in additional 20% of reward pool by stake weight against stakedTotal
         // - therefore by separating the lock tiers & combining the reward rates,
         //     we don't have to weight the quotient of stake/stakedTotal.
+        
+        // Contract's STRAD balance ie. total deposited/staked/locked STRAD
         uint stakedTotal = balanceOf(address(this));
-        distributions.push(Distribution(block.timestamp, usdcAmount, stakedTotal));
+
+        // Add a distribution to the (immutable?) record of distributions
+        distributions.push(Distribution(block.timestamp, stagingPoolSizeUsdc, stakedTotal));
+        stagingPoolSizeUsdc = 0;
     }
 
     function deposit(uint amount, uint lock_tier) public {
-
         require(lock_tier <= 4, "Invalid Lock Tier.");
 
         // transfer here requires erc20 approval

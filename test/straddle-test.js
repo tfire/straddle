@@ -36,6 +36,7 @@ describe("Token Transfer Test", function() {
     beforeEach(async function() {
         straddle = await deploy();
         [owner, other, other2] = await getOwnerOther();
+        usdc = await getUsdcContract(signer=owner);
     });
 
     it("should transfer 1 million tokens from owner to other", async function() {
@@ -90,21 +91,22 @@ describe("Token Transfer Test", function() {
 
     it("should create distributions", async function() {
         let distributions = await straddle.getDistributions();
-        assert(distributions.length == 0);
+        assert(distributions.length == 0, "distributions empty");
 
-        const usdc = await getUsdcContract(signer=owner);
         await usdc.approve(straddle.address, ethers.utils.parseEther("1"));
 
-        await straddle.distribute(ethers.BigNumber.from(10_000).mul(USDC_DECIMAL));
+        await straddle.depositRewards(ethers.BigNumber.from(10_000).mul(USDC_DECIMAL));
+        assert(await straddle.stagingPoolSizeUsdc() == 10_000 * 1000000, "USDC staging pool correct");
+        await straddle.distributeRewards();
         distributions = await straddle.getDistributions();
+        assert(distributions.length == 1, "distribution created");
+        assert(distributions[0].rewardAmount == 10_000 * 1000000, "distribution reward amount correct");
+        assert(await usdc.balanceOf(straddle.address) == 10_000 * 1000000, "USDC balance correct");
 
-        assert(distributions.length == 1);
-        assert(distributions[0].rewardAmount == 10_000 * USDC_DECIMAL);
-        assert(await usdc.balanceOf(straddle.address) == 10_000 * USDC_DECIMAL);
-
-        await straddle.distribute(ethers.BigNumber.from(10_000).mul(USDC_DECIMAL));
+        await straddle.depositRewards(ethers.BigNumber.from(10_000).mul(USDC_DECIMAL));
+        assert(await straddle.stagingPoolSizeUsdc() == 10_000 * 1000000, "USDC staging pool correct");
+        await straddle.distributeRewards();
         distributions = await straddle.getDistributions();
-
         assert(distributions.length == 2);
         assert(distributions[1].rewardAmount == 10_000 * USDC_DECIMAL);
         assert(await usdc.balanceOf(straddle.address) == 20_000 * USDC_DECIMAL);

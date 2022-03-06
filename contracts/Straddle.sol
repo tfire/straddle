@@ -37,6 +37,7 @@ contract Straddle is Context, Ownable, ERC20("Straddle", "STRAD") {
     struct Account {
         // The total STRAD an account has in deposit.
         uint depositBalance;
+        uint rewardsClaimed;
     }
     mapping(address => Account) userAccounts;
 
@@ -54,13 +55,13 @@ contract Straddle is Context, Ownable, ERC20("Straddle", "STRAD") {
         // The staked total is used to compute the rewards per user.
         // as to how the stakedTotal allows for correct reward distribution when it does not
         // take into account time-lock weights, let me explain:
-        // - tier-0 locks get created upon deposit w/ or w/o an actual time component to the lock. 
-        // - tier-0 lock is just staking to the contract. withdrawable at any point. 
+        // - tier-0 locks get created upon deposit w/ or w/o an actual time component to the lock.
+        // - tier-0 lock is just staking to the contract. withdrawable at any point.
         // - tier-0 results in 50% of the reward pool by stake weight against stakedTotal
         // - tier-2 lock results in additional 20% of reward pool by stake weight against stakedTotal
-        // - therefore by separating the lock tiers & combining the reward rates, 
+        // - therefore by separating the lock tiers & combining the reward rates,
         //     we don't have to weight the quotient of stake/stakedTotal.
-        
+
         // Contract's STRAD balance ie. total deposited/staked/locked STRAD
         uint stakedTotal = balanceOf(address(this));
 
@@ -156,19 +157,27 @@ contract Straddle is Context, Ownable, ERC20("Straddle", "STRAD") {
             totalReward += lock.stakedAmount * totalDistributionsEmittedDuringThisLockPerStakedStrad;
         }
 
-        return totalReward;
+        return totalReward - userAccounts[user].rewardsClaimed;
     }
 
     function withdraw(uint amount) public {
         uint deposited = getUserDepositBalance(msg.sender);
         uint locked = getUserLockedBalance(msg.sender);
-        require(deposited > 0, "No funds to withdraw");
+        require(deposited > 0, "No STRAD available to withdraw");
 
         uint availableToWithdraw = deposited - locked;
-        require(availableToWithdraw > 0, "No unlocked funds available to withdraw");
-        require(availableToWithdraw >= amount, "Amount to withdraw exceeds available funds");
+        require(availableToWithdraw > 0, "No unlocked STRAD available to withdraw");
+        require(availableToWithdraw >= amount, "Amount to withdraw exceeds available STRAD");
 
         userAccounts[msg.sender].depositBalance -= amount;
         _transfer(address(this), msg.sender, amount);
+    }
+
+    function claimRewards() public {
+        uint netReward = calculateRewards(msg.sender);
+        require(netReward > 0, "No rewards to claim");
+
+        userAccounts[msg.sender].rewardsClaimed += netReward;
+        USDC.transfer(msg.sender, netReward);
     }
 }

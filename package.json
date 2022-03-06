@@ -1,4 +1,7 @@
 {
+  "engines" : {
+    "node": ">=16.14.0"
+  },
   "devDependencies": {
     "@nomiclabs/hardhat-ethers": "^2.0.5",
     "@nomiclabs/hardhat-waffle": "^2.0.2",

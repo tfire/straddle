@@ -138,22 +138,22 @@ contract Straddle is Context, Ownable, ERC20("Straddle", "STRAD") {
         for (uint i = 0; i < userLocks[user].length; i++) {
 
             Lock memory lock = userLocks[user][i];
-            uint totalDistributionsEmittedDuringThisLock = 0;
+            uint totalDistributionsEmittedDuringThisLockPerStakedStrad = 0;
 
             for (uint j = 0; j < distributions.length; j++) {
                 Distribution memory distribution = distributions[j];
 
                 if (distribution.time >= lock.startTime && distribution.time <= lock.endTime) {
-                    // Summing the quotients of rewards distributed and total staked at distribution
+                    // Summing the quotients of rewards distributed and total staked at distribution time
                     // for each distribution during the lock.
                     // This is the mathematical implementation of the concept in
                     // Scalable Reward Distribution on the Ethereum Blockchain; Botag, Boca, and Johnson
                     // https://uploads-ssl.webflow.com/5ad71ffeb79acc67c8bcdaba/5ad8d1193a40977462982470_scalable-reward-distribution-paper.pdf
-                    totalDistributionsEmittedDuringThisLock += distribution.rewardAmount / distribution.stakedTotal;
+                    totalDistributionsEmittedDuringThisLockPerStakedStrad += distribution.rewardAmount / distribution.stakedTotal;
                 }
             }
 
-            totalReward += lock.stakedAmount * totalDistributionsEmittedDuringThisLock;
+            totalReward += lock.stakedAmount * totalDistributionsEmittedDuringThisLockPerStakedStrad;
         }
 
         return totalReward;

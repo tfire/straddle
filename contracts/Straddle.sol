@@ -126,7 +126,7 @@ contract Straddle is Context, Ownable, ERC20("Straddle", "STRAD") {
     function getUserLockedBalance(address user) public view returns (uint) {
         uint lockedBalance = 0;
 
-        for (uint i = 0; i < userLocks[user].length; i++) {
+        for (uint i; i < userLocks[user].length; i++) {
             Lock storage lock = userLocks[user][i];
             if (_lockIsActive(lock)) {
                 lockedBalance += lock.stakedAmount;
@@ -138,12 +138,12 @@ contract Straddle is Context, Ownable, ERC20("Straddle", "STRAD") {
 
     function calculateRewards(address user) public view returns (uint) {
         uint totalReward = 0;
-        for (uint i = 0; i < userLocks[user].length; i++) {
+        for (uint i; i < userLocks[user].length; i++) {
 
             Lock memory lock = userLocks[user][i];
             uint totalDistributionsEmittedDuringThisLockPerStakedStrad = 0;
 
-            for (uint j = 0; j < distributions.length; j++) {
+            for (uint j; j < distributions.length; j++) {
                 Distribution memory distribution = distributions[j];
 
                 if (distribution.time >= lock.startTime && distribution.time <= lock.endTime) {

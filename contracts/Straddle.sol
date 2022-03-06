@@ -156,7 +156,14 @@ contract Straddle is Context, Ownable, ERC20("Straddle", "STRAD") {
             }
 
             uint stakeAdjustedReward = lock.stakedAmount * totalDistributionsEmittedDuringThisLockPerStakedStrad;
-            uint lockTierAdjustedReward = stakeAdjustedReward.div(10).mul(lock.tier);
+            uint lockTierAdjustedReward;
+            if (lock.tier == 0) {
+                // Tier 0 gets 50% rewards
+                lockTierAdjustedReward = stakeAdjustedReward.div(10).mul(5);
+            } else {
+                // Tier 1, 2, 3, 4 get 10%, 20%, 30%, 40% additional
+                lockTierAdjustedReward = stakeAdjustedReward.div(10).mul(lock.tier);
+            }
             totalReward += lockTierAdjustedReward;
         }
 

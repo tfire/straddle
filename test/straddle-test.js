@@ -56,7 +56,7 @@ describe("Main Straddle Suite", function() {
         expect(await straddle.balanceOf(straddle.address)).to.equal(1_000_000);
 
         // Check the locks of the user
-        let locksOfUser = await straddle.getUsersLocks(other.address);
+        let locksOfUser = await straddle.getUserLocks(other.address);
         assert(locksOfUser.length == 1);
         print("Deposit created expected tier 0 lock.");
         assert(locksOfUser[0].stakedAmount == 1_000_000);
@@ -70,7 +70,7 @@ describe("Main Straddle Suite", function() {
 
         await straddle.connect(other).createLock(500_000, 1);
 
-        assert((await straddle.getUsersLocks(other.address)).length == 2);
+        assert((await straddle.getUserLocks(other.address)).length == 2);
     });
 
     // try withdraw locked assets (fail)

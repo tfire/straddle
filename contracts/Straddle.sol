@@ -115,7 +115,7 @@ contract Straddle is Context, Ownable, ERC20("Straddle", "STRAD") {
         return distributions;
     }
 
-    function getUsersLocks(address user) public view returns (Lock[] memory) {
+    function getUserLocks(address user) public view returns (Lock[] memory) {
         return userLocks[user];
     }
 

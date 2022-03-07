@@ -19,7 +19,7 @@ function print(arg) {
     }
 }
 
-describe("1. Contract Deployment Test", function() {
+describe("Contract Deployment Test", function() {
     it("should deploy and assign 10,000,000 tokens to deployer", async function() {
         const [owner] = await ethers.getSigners();
 
@@ -30,7 +30,7 @@ describe("1. Contract Deployment Test", function() {
     });
 });
 
-describe("2. Main Straddle Suite", function() {
+describe("Main Straddle Suite", function() {
     setupFunds();
 
     beforeEach(async function() {

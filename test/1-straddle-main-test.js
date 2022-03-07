@@ -30,7 +30,7 @@ describe("Contract Deployment Test", function() {
     });
 });
 
-describe("Main Straddle Suite", function() {
+describe("Main Suite", function() {
     setupFunds();
 
     beforeEach(async function() {

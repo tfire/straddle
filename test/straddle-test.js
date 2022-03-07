@@ -129,8 +129,8 @@ describe("Main Straddle Suite", function() {
 
         // verify the rewards balance
         // other and other2 should recieve half of the distribution
-        expect(await straddle.calculateRewards(other.address)).to.equal(5_000 * USDC_DECIMAL);
-        expect(await straddle.calculateRewards(other2.address)).to.equal(5_000 * USDC_DECIMAL);
+        expect(await straddle.calculateRewards(other.address)).to.equal(4_500 * USDC_DECIMAL);
+        expect(await straddle.calculateRewards(other2.address)).to.equal(4_500 * USDC_DECIMAL);
     });
 
     async function distributeTenThousandUsdc() {
@@ -147,12 +147,12 @@ describe("Main Straddle Suite", function() {
         await distributeTenThousandUsdc();
 
         // verify the rewards balance
-        expect(await straddle.calculateRewards(other2.address)).to.equal(10_000 * USDC_DECIMAL);
+        expect(await straddle.calculateRewards(other2.address)).to.equal(9_000 * USDC_DECIMAL);
         expect(await usdc.balanceOf(other2.address)).to.equal(0);
 
         // claim rewards
         await straddle.connect(other2).claimRewards();
-        expect(await usdc.balanceOf(other2.address)).to.equal(10_000 * USDC_DECIMAL);
+        expect(await usdc.balanceOf(other2.address)).to.equal(9_000 * USDC_DECIMAL);
 
         // error if user has claimed all rewards
         expect(await straddle.calculateRewards(other2.address)).to.equal(0);

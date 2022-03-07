@@ -1,5 +1,6 @@
 require("dotenv").config();
 require("@nomiclabs/hardhat-waffle");
+require("@nomiclabs/hardhat-solhint");
 require("hardhat-gas-reporter");
 
 // This is a sample Hardhat task. To learn how to create your own go to

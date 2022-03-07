@@ -12,8 +12,13 @@ import "hardhat/console.sol";
 contract Straddle is Context, Ownable, ERC20("Straddle", "STRAD") {
     using SafeMath for uint;
 
+    // TODO: remove if we aren't going to use this.
+    // was originally thinking it could be used as the expiry for tier-0.
+    // will continue to evaluate.
     uint constant YEAR_3000 = 32503680000;
-    uint constant MAX_SUPPLY = 10_000_000;
+
+    // TODO: this will ultimately need to be multiplied by ERC20 decimals. 10**18 default.
+    uint constant MAX_SUPPLY = 10_000_000; 
 
     // USDC: 0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48
     IERC20 constant USDC = IERC20(0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48);
@@ -190,6 +195,8 @@ contract Straddle is Context, Ownable, ERC20("Straddle", "STRAD") {
         uint availableToWithdraw = deposited - locked;
         require(availableToWithdraw > 0, "No unlocked STRAD available to withdraw");
         require(availableToWithdraw >= amount, "Amount to withdraw exceeds available STRAD");
+
+        // TODO: any sort of tier-0 cleanup
 
         userAccounts[msg.sender].depositBalance -= amount;
         _transfer(address(this), msg.sender, amount);

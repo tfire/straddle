@@ -25,6 +25,13 @@ async function getUsdcContract(signer) {
     );
 }
 
+async function distributeTenThousandUsdc() {
+    const usdc = await getUsdcContract(signer=owner);
+    await usdc.approve(straddle.address, ethers.utils.parseEther("1"));
+    await straddle.depositRewards(ethers.BigNumber.from(10_000).mul(USDC_DECIMAL));
+    await straddle.distributeRewards();
+}
+
 async function setupFunds() {
     /**
      * Sends 1 ETH to owner and other.
@@ -72,6 +79,7 @@ module.exports = {
     getOwnerOther,
     setupFunds,
     getUsdcContract,
+    distributeTenThousandUsdc,
     USDC_DECIMAL
 };
 

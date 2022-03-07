@@ -7,6 +7,7 @@ const {
     getOwnerOther,
     getUsdcContract,
     setupFunds,
+    distributeTenThousandUsdc,
     USDC_DECIMAL
 } = require("../scripts/lib");
 
@@ -132,13 +133,6 @@ describe("Main Straddle Suite", function() {
         expect(await straddle.calculateRewards(other.address)).to.equal(4_500 * USDC_DECIMAL);
         expect(await straddle.calculateRewards(other2.address)).to.equal(4_500 * USDC_DECIMAL);
     });
-
-    async function distributeTenThousandUsdc() {
-        const usdc = await getUsdcContract(signer=owner);
-        await usdc.approve(straddle.address, ethers.utils.parseEther("1"));
-        await straddle.depositRewards(ethers.BigNumber.from(10_000).mul(USDC_DECIMAL));
-        await straddle.distributeRewards();
-    }
 
     it("claim rewards", async function() {
         await straddle.transfer(other2.address, 5_000_000);

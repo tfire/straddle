@@ -22,17 +22,17 @@ contract Straddle is Context, Ownable, ERC20("Straddle", "STRAD") {
     uint public stagingPoolSizeUsdc;
 
     struct Distribution {
-      uint time;
-      uint rewardAmount;
-      uint stakedTotal;
+        uint time;
+        uint rewardAmount;
+        uint stakedTotal;
     }
     Distribution[] distributions;
 
     struct Lock {
-      uint startTime;
-      uint endTime;
-      uint stakedAmount;
-      uint tier; // 0 - 4
+        uint startTime;
+        uint endTime;
+        uint stakedAmount;
+        uint tier; // 0 - 4
     }
     mapping(address => Lock[]) public userLocks;
 
@@ -160,9 +160,10 @@ contract Straddle is Context, Ownable, ERC20("Straddle", "STRAD") {
                     // Summing the quotients of rewards distributed and total staked at distribution time
                     // for each distribution during the lock.
                     // This is the mathematical implementation of the concept in
-                    // Scalable Reward Distribution on the Ethereum Blockchain; Botag, Boca, and Johnson
-                    // https://uploads-ssl.webflow.com/5ad71ffeb79acc67c8bcdaba/5ad8d1193a40977462982470_scalable-reward-distribution-paper.pdf
-                    totalDistributionsEmittedDuringThisLockPerStakedStrad += distribution.rewardAmount / distribution.stakedTotal;
+                    // Scalable Reward Distribution on the Ethereum Blockchain; Botag, Boca, and Johnson (see /docs)
+                    totalDistributionsEmittedDuringThisLockPerStakedStrad += (
+                        distribution.rewardAmount / distribution.stakedTotal
+                    );
                 }
             }
 

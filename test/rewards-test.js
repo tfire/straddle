@@ -24,7 +24,7 @@ function print(arg) {
 }
 
 
-describe("Advanced Reward Testing", function() {
+describe("3. Advanced Reward Testing", function() {
     setupFunds();
 
     beforeEach(async function() {

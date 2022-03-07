@@ -19,7 +19,7 @@ function print(arg) {
     }
 }
 
-describe("Contract Deployment Test", function() {
+describe("1. Contract Deployment Test", function() {
     it("should deploy and assign 10,000,000 tokens to deployer", async function() {
         const [owner] = await ethers.getSigners();
 
@@ -27,11 +27,10 @@ describe("Contract Deployment Test", function() {
         const straddle = await StraddleFactory.deploy();
         const ownerBalance = await straddle.balanceOf(owner.address);
         expect(await straddle.totalSupply()).to.equal(ownerBalance);
-        console.log("OwnerBalance", ownerBalance);
     });
 });
 
-describe("Main Straddle Suite", function() {
+describe("2. Main Straddle Suite", function() {
     setupFunds();
 
     beforeEach(async function() {
@@ -58,7 +57,6 @@ describe("Main Straddle Suite", function() {
         // Check the locks of the user
         let locksOfUser = await straddle.getUserLocks(other.address);
         assert(locksOfUser.length == 1);
-        print("Deposit created expected tier 0 lock.");
         assert(locksOfUser[0].stakedAmount == 1_000_000);
         assert(locksOfUser[0].tier == 0);
 

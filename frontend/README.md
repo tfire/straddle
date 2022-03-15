@@ -1,4 +1,7 @@
 # Straddle Frontend
 
-Use this to get setup?
-`https://github.com/paulrberg/create-eth-app`
+```
+cd frontend
+npm i
+npm start
+```

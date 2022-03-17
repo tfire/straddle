@@ -37,6 +37,11 @@ code {
   border-style: dashed;
 }
 
+code {
+  background-color: #515151;
+
+}
+
 table {
   width: 95%;
   background-color: #515151;

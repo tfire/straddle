@@ -83,7 +83,7 @@ export class HomeView extends React.Component {
   
           <table>
             <tr>
-              <th>Lock Term</th>
+              <th>$STRAD Lock Term</th>
               <th>Base Share</th>
               <th>Boost</th>
               <th>Net Share</th>
@@ -120,7 +120,12 @@ export class HomeView extends React.Component {
             </tr>
           </table>
           <br></br>
+          <p>The dividends a participant receives are calculated like this: </p>
+          <code> (Net Share) * (Treasury Returns) * (Staked Amount / Total Staked) </code>
+          <br></br>
+          <p></p>
           <p>This schedule is designed to enable the growth of the treasury while encouraging long term engagement from reward earners.</p>
+          <p>The $STRAD token <b>does not have a reflection tax</b>, and has a fixed supply at 10,000,000.</p>
         </div>
       );
     }

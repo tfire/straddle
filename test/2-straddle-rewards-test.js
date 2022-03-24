@@ -103,6 +103,17 @@ describe("Advanced Reward Testing", function() {
     });
 
     it("Single user deposits and withdraws STRAD while distributions occur", async function() {
-        // TODO
+        await straddle.transfer(other2.address, 5_000_000);
+        await straddle.connect(other2).deposit(5_000_000, 0);
+
+        await distributeTenThousandUsdc();
+
+        expect(await straddle.calculateRewards(other2.address)).to.equal(5_000 * USDC_DECIMAL);
+        
+        await straddle.connect(other2).withdraw(5_000_000);
+        await distributeTenThousandUsdc();
+
+        // rewards belonging to the user should not have changed
+        expect(await straddle.calculateRewards(other2.address)).to.equal(5_000 * USDC_DECIMAL);
     });
 });

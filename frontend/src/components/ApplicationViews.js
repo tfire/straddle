@@ -5,6 +5,42 @@ import { Button, Button2 } from "./index";
 
 
 export class StakingView extends React.Component {
+  constructor(props) {
+    super(props);
+
+    this.initialState = {
+      balance: 420.69,
+      userLocks: undefined,
+      selectedTier: 0,
+      selectedAmount: 0,
+    }
+
+    this.handleTierSelect = this.handleTierSelect.bind(this);
+    this.populateInputWithMax = this.setSelectedAmountToMax.bind(this);
+    this.state = this.initialState;
+  }
+
+  handleTierSelect(tier) {
+    this.setState({
+      selectedTier: tier,
+    });
+  }
+
+  setSelectedAmount(event) {
+    this.setState({
+      selectedAmount: event.currentTarget.value
+    });
+
+    console.log("yo");
+    console.log(this.state.selectedAmount);
+  }
+
+  setSelectedAmountToMax() {
+    this.setState({
+      selectedAmount: this.state.balance,
+    });
+  }
+
   render() {
     return (
       <div className="application-view">

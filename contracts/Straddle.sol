@@ -193,7 +193,19 @@ contract Straddle is Context, Ownable, ERC20("Straddle", "STRAD") {
         require(availableToWithdraw > 0, "No unlocked STRAD available to withdraw");
         require(availableToWithdraw >= amount, "Amount to withdraw exceeds available STRAD");
 
-        // TODO: any sort of tier-0 cleanup
+        // TODO: tier-0 cleanup
+        // what this means is that the tier-0 lock balance needs to be reduced,
+        // or the lock should be deleted altogether.
+        // the problem is that 
+        //                       "|| (lock.tier == 0)"
+        // above will potentially disrupt expected values if lock.stakedAmount is not adjusted
+        // and if we do not give tier-0 a pseudo-expiry of some kind.
+        
+        // simpler route is:
+
+        // it could be of benefit to hold a single definite tier-0 lock per user which
+        // has a stakedAmount that normally fluctuates over time with the staking of additional
+        // token, with or without the creation of timelocks, as well as withdrawals.
 
         userAccounts[msg.sender].depositBalance -= amount;
         _transfer(address(this), msg.sender, amount);

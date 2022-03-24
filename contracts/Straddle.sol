@@ -12,11 +12,6 @@ import "hardhat/console.sol";
 contract Straddle is Context, Ownable, ERC20("Straddle", "STRAD") {
     using SafeMath for uint;
 
-    // TODO: remove if we aren't going to use this.
-    // was originally thinking it could be used as the expiry for tier-0.
-    // will continue to evaluate.
-    uint constant YEAR_3000 = 32503680000;
-
     // TODO: this will ultimately need to be multiplied by ERC20 decimals. 10**18 default.
     uint constant MAX_SUPPLY = 10_000_000; 
 

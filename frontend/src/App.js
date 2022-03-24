@@ -78,26 +78,26 @@ function App(props) {
   const [provider, loadWeb3Modal, logoutOfWeb3Modal] = useWeb3Modal();
 
   return (
-    <div class="container unselectable">
+    <div className="container unselectable">
       <Header>
         <p>⚖️ Straddle.Finance</p>
         <WalletButton provider={provider} loadWeb3Modal={loadWeb3Modal} logoutOfWeb3Modal={logoutOfWeb3Modal} />
       </Header>
       <Body>
-        <div class="application-header">
-          <div class="application-header-left">
+        <div className="application-header">
+          <div className="application-header-left">
             <Button onClick={() => window.open("/", "_self")}>home</Button>
             <Button onClick={() => window.open("https://github.com/tfire/straddle")}>docs</Button>
             <Button onClick={() => window.open("https://discord.com")}>discord</Button>
             <Button onClick={() => window.open("https://twitter.com/straddlefi")}>twitter</Button>
           </div>
-          <div class="application-header-right">
+          <div className="application-header-right">
             <Button onClick={() => window.open("/staking", "_self")}>staking</Button>
             <Button onClick={() => window.open("/rewards", "_self")}>rewards</Button>
             <Button onClick={() => window.open("/treasury", "_self")}>treasury</Button>
           </div>
         </div>
-        <div class="application-body">
+        <div className="application-body">
           {
             props.which_view === "home" ? <HomeView/> 
             :props.which_view === "about"? <AboutView/>

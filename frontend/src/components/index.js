@@ -68,8 +68,4 @@ export const Button2 = styled.button`
   text-align: right;
   font-family: "Source Code Pro", monospace;
   font-size: 12.5px;
-  ${props => props.hidden && "hidden"} :focus {
-    border: none;
-    outline: none;
-  }
 `;

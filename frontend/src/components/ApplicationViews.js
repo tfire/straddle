@@ -7,34 +7,38 @@ import { Button, Button2 } from "./index";
 export class StakingView extends React.Component {
   render() {
     return (
-      <div class="application-view">
+      <div className="application-view">
         <h1>STAKING</h1>
 
         <br></br>
 
-        <div class="left-right-parent-container">
-          <div class="left-right-container-left">
+        <div className="left-right-parent-container">
+          <div className="left-right-container-left">
             <p>Amount: </p>
-            <input></input>
-            <Button2>MAX</Button2>
+            <input 
+              value={this.state.selectedAmount} 
+              onChange={(event) => this.setSelectedAmount(event)}
+              onBlur={(event) => this.setSelectedAmount(event)}>
+            </input>
+            <Button2 onClick={this.populateInputWithMax}>MAX</Button2>
           </div>
-          <div class="left-right-container-right">
+          <div className="left-right-container-right">
             <p>Lock Term: </p>
             <div id="straddle-lock-selector-div">
-              <Button2 onClick={() => this.term_selected = 0}>0</Button2>
-              <Button2 onClick={() => this.term_selected = 1}>3</Button2>
-              <Button2 onClick={() => this.term_selected = 2}>6</Button2>
-              <Button2 onClick={() => this.term_selected = 3}>9</Button2>
-              <Button2 onClick={() => this.term_selected = 4}>12</Button2>
+              <button onClick={() => this.handleTierSelect(0)} className={this.state.selectedTier == 0 ? "toggledButton" : "button2"}>0</button>
+              <button onClick={() => this.handleTierSelect(1)} className={this.state.selectedTier == 1 ? "toggledButton" : "button2"}>3</button>
+              <button onClick={() => this.handleTierSelect(2)} className={this.state.selectedTier == 2 ? "toggledButton" : "button2"}>6</button>
+              <button onClick={() => this.handleTierSelect(3)} className={this.state.selectedTier == 3 ? "toggledButton" : "button2"}>9</button>
+              <button onClick={() => this.handleTierSelect(4)} className={this.state.selectedTier == 4 ? "toggledButton" : "button2"}>12</button>
               <p>months</p>
               <a>?</a>
             </div>
             <Button2 onClick={() => console.log(this.term_selected)}>CREATE</Button2>
           </div>
         </div>
-        <div id="staking-view-available-balance-div" class="left-right-parent-container">
-          <div class="left-right-container-left">
-            <p>Wallet Balance: 420.69 <b>STRAD</b></p>
+        <div id="staking-view-available-balance-div" className="left-right-parent-container">
+          <div className="left-right-container-left">
+            <p>Wallet Balance: {this.state.balance} <b>STRAD</b></p>
           </div>
         </div>
       
@@ -54,7 +58,7 @@ export class StakingView extends React.Component {
 export class RewardsView extends React.Component {
   render() {
     return (
-      <div class="application-view">
+      <div className="application-view">
         <h1>
           REWARDS
         </h1>
@@ -79,13 +83,13 @@ export class RewardsView extends React.Component {
 export class TreasuryView extends React.Component {
   render() {
     return (
-      <div class="application-view">
+      <div className="application-view">
         <h1>
           TREASURY
         </h1>
         <br></br>
         <p>Under development... 🔨</p>
-        {/* <div class="charts">
+        {/* <div className="charts">
           <PieChart
             data={[
               { title: 'One', value: 10, color: '#ffe6e6' },
@@ -105,7 +109,7 @@ export class TreasuryView extends React.Component {
 export class HomeView extends React.Component {
     render() {
       return (
-        <div class="application-view">
+        <div className="application-view">
           <h1>DELTA NEUTRAL TRADING AS A SERVICE</h1>
   
           <p>Straddle Finance is a web3 hedge fund.</p>
@@ -167,7 +171,7 @@ export class HomeView extends React.Component {
 export class AboutView extends React.Component {
     render() {
       return (
-        <div class="application-view">
+        <div className="application-view">
           <h1>About the team</h1>
         </div>
       );

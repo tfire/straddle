@@ -84,7 +84,8 @@ export class TreasuryView extends React.Component {
           TREASURY
         </h1>
         <br></br>
-        <div class="charts">
+        <p>Under development... 🔨</p>
+        {/* <div class="charts">
           <PieChart
             data={[
               { title: 'One', value: 10, color: '#ffe6e6' },
@@ -92,7 +93,7 @@ export class TreasuryView extends React.Component {
               { title: 'Three', value: 20, color: '#e6e6e6' },
             ]}
           />
-        </div>
+        </div> */}
         <div></div>
         <div></div>
         <div></div>

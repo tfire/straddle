@@ -1,8 +1,7 @@
 import React from "react";
 import { PieChart } from 'react-minimal-pie-chart';
 
-import { ApplicationViewTile, Button } from "./index";
-
+import { Button, Button2 } from "./index";
 
 
 export class StakingView extends React.Component {
@@ -13,7 +12,40 @@ export class StakingView extends React.Component {
 
         <br></br>
 
-        <h1>Your locks:</h1>
+        <div class="left-right-parent-container">
+          <div class="left-right-container-left">
+            <p>Amount: </p>
+            <input></input>
+            <Button2>MAX</Button2>
+          </div>
+          <div class="left-right-container-right">
+            <p>Lock Term: </p>
+            <div id="straddle-lock-selector-div">
+              <Button2 onClick={() => this.term_selected = 0}>0</Button2>
+              <Button2 onClick={() => this.term_selected = 1}>3</Button2>
+              <Button2 onClick={() => this.term_selected = 2}>6</Button2>
+              <Button2 onClick={() => this.term_selected = 3}>9</Button2>
+              <Button2 onClick={() => this.term_selected = 4}>12</Button2>
+              <p>months</p>
+              <a>?</a>
+            </div>
+            <Button2 onClick={() => console.log(this.term_selected)}>CREATE</Button2>
+          </div>
+        </div>
+        <div id="staking-view-available-balance-div" class="left-right-parent-container">
+          <div class="left-right-container-left">
+            <p>Wallet Balance: 420.69 <b>STRAD</b></p>
+          </div>
+        </div>
+      
+        <br></br>
+        <br></br>
+        
+        <h4>HISTORY</h4>
+        <div>
+          <p>You have no past or present deposits.</p>
+          {/* TODO: want to put a table in here that displays all the user's locks, past and present */}
+        </div>
       </div>
     );
   }

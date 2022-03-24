@@ -59,4 +59,17 @@ export const Button = styled.button`
     outline: none;
   }
 `;
-  // border-radius: 8px;
+
+export const Button2 = styled.button`
+  background-color: gray;
+  border: none;
+  color: white;
+  cursor: pointer;
+  text-align: right;
+  font-family: "Source Code Pro", monospace;
+  font-size: 12.5px;
+  ${props => props.hidden && "hidden"} :focus {
+    border: none;
+    outline: none;
+  }
+`;

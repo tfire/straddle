@@ -68,6 +68,10 @@ button:hover {
   color: black;
 }
 
+#max-button {
+  margin-left: 5px;
+}
+
 .button2 {
   background-color: gray;
   border: none;

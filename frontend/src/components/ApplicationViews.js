@@ -56,7 +56,7 @@ export class StakingView extends React.Component {
               onChange={(event) => this.setSelectedAmount(event)}
               onBlur={(event) => this.setSelectedAmount(event)}>
             </input>
-            <Button2 onClick={this.populateInputWithMax}>MAX</Button2>
+            <Button2 id="max-button" onClick={this.populateInputWithMax}>MAX</Button2>
           </div>
           <div className="left-right-container-right">
             <p>Lock Term: </p>

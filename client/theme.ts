@@ -12,10 +12,11 @@ export const theme = extendTheme({
         padding: 0,
         margin: 0,
         backgroundColor: 'black',
+        fontFamily: "Source Code Pro",
       },
       fonts: {
         body:
-          "-apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Oxygen, Ubuntu, Cantarell, Fira Sans, Droid Sans, Helvetica Neue, sans-serif",
+          "Source Code Pro, monospace",
       },
     },
   },

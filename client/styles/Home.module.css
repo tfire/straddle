@@ -1,0 +1,217 @@
+/* body {
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+code {
+  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
+    monospace;
+} */
+
+@import url("https://fonts.googleapis.com/css?family=Source+Code+Pro:400,700");
+/**
+ * Style variables
+ */
+
+ .unselectable {
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+
+/**
+ * Global
+ */
+
+.charts {
+  margin-top: 300px;
+  margin:auto;
+  width:50%;
+  border-style: dashed;
+}
+
+#max-button {
+  margin-left: 5px;
+}
+
+.button2 {
+  background-color: gray;
+  border: none;
+  color: white;
+  cursor: pointer;
+  text-align: right;
+  font-family: "Source Code Pro", monospace;
+  font-size: 12.5px;
+  /* ${props => props.hidden && "hidden"} :focus {
+    border: none;
+    outline: none;
+  } */
+}
+
+.toggledButton {
+  background-color: white;
+  color: black;
+  font-family: "Source Code Pro", monospace;
+  font-size: 12.5px;
+
+}
+
+/**
+ * Layout
+ */
+.container {
+  height: 100%;
+  width: 100%;
+  max-width: 700px;
+  margin-right: auto;
+  margin-left: auto;
+}
+
+.application-header {
+  display: flex;
+
+  border-style: dashed;
+  width: 100%;
+  height: 30px;
+  align-content: center;
+}
+
+.application-header-right {
+  display: flex;
+  margin-left: auto;
+}
+
+.application-header-left {
+  display: flex;
+}
+
+.application-body {
+  align-items: center;
+  align-content: center;
+  text-align: center;
+  display: flex;
+  border-style: dashed;
+  margin-top: 7px;
+  width: 100%;
+  height: 100%;
+}
+
+/* application views are within the application body */
+.application-view {
+  margin-top: 10px;
+  align-content: center;
+  width: 100%;
+  height: 100%;
+  text-justify: kashida;
+}
+
+.left-right-parent-container {
+  display: flex;
+  margin-top: 25px;
+  width: 100%;
+  height: 20px;
+  align-content: center;
+}
+.left-right-container-left {
+  margin-left: 20px;
+  display: flex;
+
+}
+.left-right-container-right {
+  display: flex;
+  margin-left: auto;
+  margin-right: 20px;
+}
+
+#staking-view-available-balance-div {
+  margin-top:5px;
+}
+
+#straddle-lock-selector-div {
+  margin-right: 20px;
+}
+
+#rewards-view-container {
+  width:100%;
+  text-align:center;
+ }
+ #rewards-view-container > div {
+  width: calc(100% / 4);
+  display: inline-block;
+  vertical-align: top;
+  border:1px dashed;
+  text-align:center;
+  margin:2%;
+  padding:60px;
+ }
+
+.break {
+  margin-top: 15px;
+  height: 0.5px;
+  width: 100%;
+  border-style: dashed;
+}
+
+
+/**
+ * Highlight/Markup
+ */
+
+
+/**
+ * Lists
+ */
+:not(.menu) > ul {
+  list-style: none;
+  padding-left: 0;
+}
+
+:not(.menu) > ul {
+  list-style-type: none;
+}
+
+:not(.menu) > ul > li:before {
+  content: "-";
+  margin-right: 9px;
+}
+
+/**
+ * Header/Navigation
+ */
+.menu {
+  border-top: var(--border);
+  border-bottom: var(--border);
+  margin-bottom: 25px;
+}
+
+.menu ul {
+  margin-top: 12px;
+  margin-bottom: 12px;
+  padding-left: 0px;
+  list-style-type: none;
+  text-align: right;
+}
+
+.menu ul li {
+  display: inline;
+  text-align: right;
+  /* margin-left: 10px; */
+}
+
+.menu ul li a {
+  text-decoration: none;
+  color: var(--text-color);
+}
+
+.menu ul li a:hover {
+  text-decoration: none;
+  color: var(--background-color);
+  background-color: var(--base-color);
+}

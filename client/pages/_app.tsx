@@ -4,14 +4,7 @@ import { ProviderWeb3 } from "@lido-sdk/web3-react";
 import { ChakraProvider, DarkMode, extendTheme, ThemeConfig } from '@chakra-ui/react'
 
 import { rpc, supportedChainIds } from "../constants/web3data"
-
-const config: ThemeConfig = {
-  initialColorMode: 'dark',
-}
-
-const theme = extendTheme({
-  config
-});
+import { theme } from '../theme';
 
 function MyApp({ Component, pageProps }: AppProps) {
   return (<ChakraProvider theme={theme}>

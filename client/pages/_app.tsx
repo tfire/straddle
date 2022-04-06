@@ -5,6 +5,7 @@ import { ChakraProvider, DarkMode, extendTheme, ThemeConfig } from '@chakra-ui/r
 
 import { rpc, supportedChainIds } from "../constants/web3data"
 import { theme } from '../theme';
+import Layout from '../components/layout';
 
 function MyApp({ Component, pageProps }: AppProps) {
   return (<ChakraProvider theme={theme}>
@@ -13,7 +14,10 @@ function MyApp({ Component, pageProps }: AppProps) {
     supportedChainIds={supportedChainIds}
     rpc={rpc}
   >
+    <Layout>
     <Component {...pageProps} />
+
+    </Layout>
   </ProviderWeb3>
   </ChakraProvider>
   )

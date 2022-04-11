@@ -1,11 +1,13 @@
-import { Box, Button, Flex, Spacer, Stack, Text } from "@chakra-ui/react";
+import { Box, Button, Flex, Link, Stack, Text } from "@chakra-ui/react";
 import Head from "next/head";
+import { useRouter } from "next/router";
 import React, { useState } from "react";
 import styles from "../styles/Home.module.css";
 import ConnectWalletModal from "./connectWalletModal";
 
 const Layout = ({ children }) => {
   const [openModal, setOpenModal] = useState<boolean>(false);
+  const router = useRouter();
 
   const closeModal = () => {
     setOpenModal(false);
@@ -30,9 +32,13 @@ const Layout = ({ children }) => {
       )}
 
       <div className="application-view">
-        <Flex justify='space-between' alignItems='center' mb={2}>
-          <Text fontSize='14px' variant="medium">⚖️ Straddle.Finance</Text>
-          <Button variant='primary' onClick={() => setOpenModal(true)}>Connect Wallet</Button>
+        <Flex justify="space-between" alignItems="center" mb={2}>
+          <Text fontSize="14px" variant="medium">
+            ⚖️ Straddle.Finance
+          </Text>
+          <Button variant="primary" onClick={() => setOpenModal(true)}>
+            Connect Wallet
+          </Button>
         </Flex>
         <Flex
           borderWidth="2px"
@@ -41,15 +47,62 @@ const Layout = ({ children }) => {
           justify="space-between"
         >
           <Flex gap={2}>
-            <Button variant='secondary'>home</Button>
-            <Button variant='secondary'>docs</Button>
-            <Button variant='secondary'>discord</Button>
-            <Button variant='secondary'>twitter</Button>
+            <Button
+              onClick={() => {
+                router.push("/");
+              }}
+              variant="secondary"
+            >
+              home
+            </Button>
+            <Link
+              _hover={{ fontStyle: "none" }}
+              href="https://github.com/tfire/straddle"
+              target="_blank"
+            >
+              <Button variant="secondary">docs</Button>
+            </Link>
+            <Link
+              _hover={{ fontStyle: "none" }}
+              href="https://discord.com"
+              target="_blank"
+            >
+              <Button variant="secondary">discord</Button>
+            </Link>
+            <Link
+              _hover={{ fontStyle: "none" }}
+              href="https://twitter.com/straddlefi"
+              target="_blank"
+            >
+              <Button variant="secondary">twitter</Button>
+            </Link>
           </Flex>
           <Flex gap={2}>
-            <Button variant='secondary'>staking</Button>
-            <Button variant='secondary'>rewards</Button>
-            <Button variant='secondary'>treasury</Button>
+            <Button
+              onClick={() => {
+                router.push("/staking");
+              }}
+              variant="secondary"
+            >
+              staking
+            </Button>
+            <Button
+              onClick={() => {
+                console.log("/rewards button clicked");
+                router.push("/rewards");
+              }}
+              variant="secondary"
+            >
+              rewards
+            </Button>
+            <Button
+              onClick={() => {
+                router.push("/treasury");
+              }}
+              variant="secondary"
+            >
+              treasury
+            </Button>
           </Flex>
         </Flex>
         <Stack

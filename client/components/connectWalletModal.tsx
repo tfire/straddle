@@ -7,9 +7,9 @@ import {
   useDisconnect,
 } from "@lido-sdk/web3-react";
 
-import {Modal, ModalContent} from "../styles/components";
+import {Modal, ModalContent} from "@chakra-ui/react";
 
-export default function ConnectWalletModal({openModal, closeModal}) {
+export default function ConnectWalletModal({openModal, closeModal, isOpenModal}) {
 
   const {  account } = useWeb3();
   const metamask = useConnectorMetamask();
@@ -19,7 +19,7 @@ export default function ConnectWalletModal({openModal, closeModal}) {
   const { disconnect } = useDisconnect();
 
   return (
-    <Modal>
+    <Modal isOpen={isOpenModal} onClose={closeModal}>
       <ModalContent>
         {!account ?
           <>

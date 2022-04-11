@@ -1,6 +1,6 @@
 import { Box, Button, Flex, Stack, Link, Text, useDisclosure } from "@chakra-ui/react";
 import Head from "next/head";
-import React, { useState } from "react";
+import React from "react";
 import styles from "../styles/Home.module.css";
 import ConnectWalletModal from "./connectWalletModal";
 
@@ -26,14 +26,13 @@ const Layout = ({ children }) => {
         <link rel="icon" href="/favicon0.ico" />
       </Head>
 
-      {isOpenModal && (
-        <ConnectWalletModal closeModal={onCloseModal} openModal={openModal} />
-      )}
+        <ConnectWalletModal closeModal={onCloseModal} isOpenModal={isOpenModal} openModal={openModal} />
 
         <Flex justify='space-between' alignItems='center' mb={2}>
           <Text fontSize='14px' variant="medium">⚖️ Straddle.Finance</Text>
-          <Button variant='primary' onClick={() => openModal()}>Connect Wallet</Button>
+          <Button variant='primary' onClick={() => {openModal(); console.log("connect wallet")}}>Connect Wallet</Button>
         </Flex>
+
         <Flex
           borderWidth="2px"
           borderStyle="dashed"
@@ -58,7 +57,7 @@ const Layout = ({ children }) => {
           </Link>
           <Link
             _hover={{ fontStyle: "none" }}
-            href="https://discord.com"
+            href="https://discord.gg"
             target="_blank"
           >
             <Button variant="secondary">discord</Button>

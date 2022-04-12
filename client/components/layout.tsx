@@ -19,6 +19,7 @@ const Layout = ({ children }) => {
       m="auto"
       pt="10px"
       className={styles.container}
+      userSelect="none"
     >
       <Head>
         <title>Straddle</title>

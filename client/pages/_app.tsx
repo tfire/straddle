@@ -1,4 +1,5 @@
 import '../styles/globals.css'
+import '../styles/Home.module.css'
 import type { AppProps } from 'next/app'
 import { ProviderWeb3 } from "@lido-sdk/web3-react";
 import { ChakraProvider, DarkMode, extendTheme, ThemeConfig } from '@chakra-ui/react'

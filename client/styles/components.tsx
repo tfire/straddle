@@ -60,13 +60,18 @@ export const Button = styled.button`
 `;
 
 export const Button2 = styled.button`
-  background-color: gray;
+  background-color: gray !important;
+  :hover {
+    background-color: white !important;
+  };
   border: none;
   color: white;
   cursor: pointer;
   text-align: right;
   font-family: "Source Code Pro", monospace;
   font-size: 12.5px;
+  padding: 1px 6px;
+  margin-left: 5px !important;
 `;
 
 export const Modal = styled.div`

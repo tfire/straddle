@@ -1,15 +1,45 @@
-import { Box, Button, Flex, Stack, Link, Text, useDisclosure } from "@chakra-ui/react";
+import {
+  Box,
+  Button,
+  Flex, Link, Stack, Text,
+  useDisclosure
+} from "@chakra-ui/react";
+import { useWeb3 } from "@lido-sdk/web3-react";
+import { ethers } from "ethers";
 import Head from "next/head";
-import React from "react";
+import { useRouter } from "next/router";
+import React, { useEffect, useState } from "react";
 import styles from "../styles/Home.module.css";
 import ConnectWalletModal from "./connectWalletModal";
 
-import {useRouter} from "next/router";
 
 const Layout = ({ children }) => {
-  const {isOpen: isOpenModal, onOpen: openModal, onClose: onCloseModal} = useDisclosure();
+  const {
+    isOpen: isOpenModal,
+    onOpen: openModal,
+    onClose: onCloseModal,
+  } = useDisclosure();
+
+  const { account } = useWeb3();
+  const [name, setName] = useState<string>("");
+  const provider = ethers.providers.getDefaultProvider();
 
   const router = useRouter();
+
+  useEffect(() => {
+    const getName = async () => {
+      const name = await provider.lookupAddress(account);
+      if (name) {
+        setName(name);
+      } else {
+        setName(account.substring(0, 6) + "..." + account.substring(36));
+      }
+    };
+
+    if (account) {
+      getName();
+    }
+  }, [account, provider]);
 
   return (
     <Box
@@ -27,19 +57,33 @@ const Layout = ({ children }) => {
         <link rel="icon" href="/favicon0.ico" />
       </Head>
 
-        <ConnectWalletModal closeModal={onCloseModal} isOpenModal={isOpenModal} openModal={openModal} />
+      <ConnectWalletModal
+        closeModal={onCloseModal}
+        isOpenModal={isOpenModal}
+        openModal={openModal}
+      />
 
-        <Flex justify='space-between' alignItems='center' mb={2}>
-          <Text fontSize='14px' variant="medium">⚖️ Straddle.Finance</Text>
-          <Button variant='primary' onClick={() => {openModal(); console.log("connect wallet")}}>Connect Wallet</Button>
-        </Flex>
-
-        <Flex
-          borderWidth="2px"
-          borderStyle="dashed"
-          borderColor="white"
-          justify="space-between"
+      <Flex justify="space-between" alignItems="center" mb={2}>
+        <Text fontSize="14px" variant="medium">
+          ⚖️ Straddle.Finance
+        </Text>
+        <Button
+          variant="primary"
+          onClick={() => {
+            openModal();
+            console.log("connect wallet");
+          }}
         >
+          {name ? name : "Connect Wallet"}
+        </Button>
+      </Flex>
+
+      <Flex
+        borderWidth="2px"
+        borderStyle="dashed"
+        borderColor="white"
+        justify="space-between"
+      >
         <Flex gap={2}>
           <Button
             onClick={() => {
@@ -73,21 +117,27 @@ const Layout = ({ children }) => {
         </Flex>
 
         <Flex gap={2}>
-          <Button variant='secondary' onClick={() => router.push('/staking')}>staking</Button>
-          <Button variant='secondary' onClick={() => router.push('/rewards')}>rewards</Button>
-          <Button variant='secondary' onClick={() => router.push('/treasury')}>treasury</Button>
+          <Button variant="secondary" onClick={() => router.push("/staking")}>
+            staking
+          </Button>
+          <Button variant="secondary" onClick={() => router.push("/rewards")}>
+            rewards
+          </Button>
+          <Button variant="secondary" onClick={() => router.push("/treasury")}>
+            treasury
+          </Button>
         </Flex>
-        </Flex>
+      </Flex>
 
-        <Stack
-          borderWidth="2px"
-          borderStyle="dashed"
-          borderColor="white"
-          p={2}
-          mt={2}
-        >
-          {children}
-        </Stack>
+      <Stack
+        borderWidth="2px"
+        borderStyle="dashed"
+        borderColor="white"
+        p={2}
+        mt={2}
+      >
+        {children}
+      </Stack>
     </Box>
   );
 };

@@ -7,31 +7,59 @@ import {
   useDisconnect,
 } from "@lido-sdk/web3-react";
 
-import {Modal, ModalContent} from "@chakra-ui/react";
+import {
+  Button,
+  Modal,
+  ModalBody,
+  ModalContent,
+  Stack,
+} from "@chakra-ui/react";
+import { useEffect } from "react";
 
-export default function ConnectWalletModal({openModal, closeModal, isOpenModal}) {
-
-  const {  account } = useWeb3();
+export default function ConnectWalletModal({
+  openModal,
+  closeModal,
+  isOpenModal,
+}) {
+  const { account } = useWeb3();
   const metamask = useConnectorMetamask();
   const coinbase = useConnectorCoinbase();
   const trust = useConnectorTrust();
   const walletconnect = useConnectorWalletConnect();
   const { disconnect } = useDisconnect();
 
+  useEffect(() => {
+    console.log("account: ", account);
+  }, [account]);
+
   return (
     <Modal isOpen={isOpenModal} onClose={closeModal}>
       <ModalContent>
-        {!account ?
-          <>
-        <button onClick={() => metamask.connect()}>Connect with Metamask</button>
-        <button onClick={() => walletconnect.connect()}>Connect with WalletConnect</button>
-        <button onClick={() => coinbase.connect()}>Connect with Coinbase</button>
-        <button onClick={() => trust.connect()}>Connect with TrustWallet</button>
-        </> :
-
-        <button onClick={() => disconnect()}>Disconnect</button>
-      }
+        <ModalBody>
+          {!account ? (
+            <Stack gap={2}>
+              <Button onClick={() => metamask.connect()}>
+                Connect with Metamask
+              </Button>
+              <Button onClick={() => walletconnect.connect()}>
+                Connect with WalletConnect
+              </Button>
+              <Button onClick={() => coinbase.connect()}>
+                Connect with Coinbase
+              </Button>
+              <Button onClick={() => trust.connect()}>
+                Connect with TrustWallet
+              </Button>
+            </Stack>
+          ) : (
+            <Stack gap={2}>
+              <Button m="auto" onClick={() => disconnect()}>
+                Disconnect
+              </Button>
+            </Stack>
+          )}
+        </ModalBody>
       </ModalContent>
     </Modal>
-  )
+  );
 }

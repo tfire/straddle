@@ -2,7 +2,7 @@
   "name": "straddle",
   "version": "1.0.0",
   "engines": {
-    "node": ">=16.14.0"
+    "node": ">=16.13.0"
   },
   "devDependencies": {
     "@nomiclabs/hardhat-ethers": "^2.0.5",

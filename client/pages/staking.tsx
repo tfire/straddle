@@ -1,13 +1,46 @@
 import { border, Box, Button, Flex, Heading, Text } from "@chakra-ui/react";
 import { useState, useEffect } from "react";
 
+import abi from "../public/abis/straddle-abi.json";
+
+import { useContractSWR } from "@lido-sdk/react"
+import { useWeb3 } from "@lido-sdk/web3-react"
+import { CHAINS } from "@lido-sdk/constants";
+import { getERC20Contract } from "@lido-sdk/contracts";
+import { getRpcProvider } from "@lido-sdk/providers";
+import ethers from "ethers";
+
 import { Button2 } from "../styles/components";
 
+export const rpc = {
+  [CHAINS.Mainnet]: process.env.NEXT_PUBLIC_SC_RPC_URL_1,
+  [4]: "https://bsc-dataseed.binance.org/"
+};
+
 export default function Staking() {
-  const [balance, setBalance] = useState<number>(420.69);
+  const {account} = useWeb3();
+
+const contractAddress = "0xf72Cabed72b3936E0F952b5E96a5d95A4Ec776DF";
+const providerRpc = getRpcProvider(CHAINS.Mainnet, rpc[CHAINS.Mainnet]);
+
+const straddleContract = getERC20Contract(
+  "0xf72Cabed72b3936E0F952b5E96a5d95A4Ec776DF",
+  providerRpc
+);
+
+
+const contractRpc = getERC20Contract(contractAddress, providerRpc);
+
+  const [balance, setBalance] = useState<number>();
   const [userLocks, setUserLocks] = useState<any>();
   const [selectedTier, setSelectedTier] = useState<number>(0);
   const [selectedAmount, setSelectedAmount] = useState<number>(0);
+
+  const { data, loading } = useContractSWR({
+  contract: contractRpc,
+  method: "balanceOf",
+  params: [account],
+});
 
   useEffect(() => {
     console.log('selectedAmount', selectedAmount)

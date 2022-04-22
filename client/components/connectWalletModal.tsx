@@ -38,16 +38,16 @@ export default function ConnectWalletModal({
         <ModalBody>
           {!account ? (
             <Stack gap={2}>
-              <Button onClick={() => metamask.connect()}>
+              <Button onClick={metamask.connect}>
                 Connect with Metamask
               </Button>
-              <Button onClick={() => walletconnect.connect()}>
+              <Button onClick={walletconnect.connect}>
                 Connect with WalletConnect
               </Button>
-              <Button onClick={() => coinbase.connect()}>
+              <Button onClick={coinbase.connect}>
                 Connect with Coinbase
               </Button>
-              <Button onClick={() => trust.connect()}>
+              <Button onClick={trust.connect}>
                 Connect with TrustWallet
               </Button>
             </Stack>

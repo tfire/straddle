@@ -1,14 +1,25 @@
-import { border, Box, Button, Flex, Heading, Text } from "@chakra-ui/react";
+import {
+  Alert,
+  border,
+  Box,
+  Button,
+  Flex,
+  Heading,
+  Text,
+} from "@chakra-ui/react";
+import { JsonRpcProvider } from "@ethersproject/providers";
+import { useLDOContractWeb3 } from "@lido-sdk/react";
+import { ProviderWeb3, useWeb3 } from "@lido-sdk/web3-react";
+import { ethers } from "ethers";
 import { useState, useEffect } from "react";
 
 import abi from "../public/abis/straddle-abi.json";
 
 import { useContractSWR } from "@lido-sdk/react"
-import { useWeb3 } from "@lido-sdk/web3-react"
+
 import { CHAINS } from "@lido-sdk/constants";
 import { getERC20Contract } from "@lido-sdk/contracts";
 import { getRpcProvider } from "@lido-sdk/providers";
-import ethers from "ethers";
 
 import { Button2 } from "../styles/components";
 
@@ -35,6 +46,11 @@ const contractRpc = getERC20Contract(contractAddress, providerRpc);
   const [userLocks, setUserLocks] = useState<any>();
   const [selectedTier, setSelectedTier] = useState<number>(0);
   const [selectedAmount, setSelectedAmount] = useState<number>(0);
+  const [createDepositLoading, setCreateDepositLoading] = useState<boolean>(
+    false
+  );
+
+
 
   const { data, loading } = useContractSWR({
   contract: contractRpc,
@@ -43,8 +59,8 @@ const contractRpc = getERC20Contract(contractAddress, providerRpc);
 });
 
   useEffect(() => {
-    console.log('selectedAmount', selectedAmount)
-  }, [selectedAmount])
+    console.log("selectedAmount", selectedAmount);
+  }, [selectedAmount]);
 
   const handleTierSelect = (tier) => {
     setSelectedTier(tier);
@@ -58,8 +74,38 @@ const contractRpc = getERC20Contract(contractAddress, providerRpc);
     setSelectedAmount(balance);
   };
 
+  const createDeposit = async () => {
+    setCreateDepositLoading(true);
+    // if (!account) {
+    //   alert("Connect wallet to create Deposit");
+    //   return;
+    // }
+    const { ethereum } = window;
+    if (ethereum) {
+      try {
+        // const contract = new ethers.Contract(
+        //   contractAddress,
+        //   abi.abi,
+        //   signer
+        // );
+        // // await contract.approve(contractAddress, ethers.constants.MaxUint256.toString())
+
+        // const deposit = await contract.deposit(selectedAmount, selectedTier, {
+        //   gasLimit: 1000000,
+        // });
+        // await deposit.wait();
+        setCreateDepositLoading(false);
+        alert("Deposit created successfully");
+      } catch (error) {
+        console.log(error);
+        setCreateDepositLoading(false);
+        throw error;
+      }
+    }
+  };
+
   return (
-    <div  className="application-view">
+    <div className="application-view">
       <Heading
         fontSize="15.5px"
         fontWeight="bold"
@@ -87,7 +133,7 @@ const contractRpc = getERC20Contract(contractAddress, providerRpc);
             onBlur={(event) => handleAmount(event)}
             type="number"
             min={0}
-            style={{ color: 'black', marginRight: '5px', padding: '2px'}}
+            style={{ color: "black", marginRight: "5px", padding: "2px" }}
           />
           <Button2 onClick={handleAmountToMax}>MAX</Button2>
         </Flex>
@@ -163,9 +209,7 @@ const contractRpc = getERC20Contract(contractAddress, providerRpc);
             <p>months</p>
             <a>?</a>
           </Box>
-          <Button2 onClick={() => console.log(selectedTier, selectedAmount)}>
-            CREATE
-          </Button2>
+          <Button2 onClick={createDeposit}>CREATE</Button2>
         </Flex>
       </Flex>
       <Box

@@ -38,7 +38,12 @@ export default function ConnectWalletModal({
         <ModalBody>
           {!account ? (
             <Stack gap={2}>
-              <Button onClick={metamask.connect}>
+              <Button onClick={() =>
+                {if (window.ethereum) {
+                metamask.connect()
+              } else {
+                console.log("no metamask")
+              }}}>
                 Connect with Metamask
               </Button>
               <Button onClick={walletconnect.connect}>

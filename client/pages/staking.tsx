@@ -5,7 +5,14 @@ import {
   Button,
   Flex,
   Heading,
+  Table,
+  TableContainer,
+  Tbody,
+  Td,
   Text,
+  Th,
+  Thead,
+  Tr,
 } from "@chakra-ui/react";
 import { JsonRpcProvider } from "@ethersproject/providers";
 import { useLDOContractWeb3 } from "@lido-sdk/react";
@@ -15,48 +22,88 @@ import { useState, useEffect } from "react";
 
 import abi from "../public/abis/straddle-abi.json";
 
-import { useContractSWR } from "@lido-sdk/react"
+import { useContractSWR } from "@lido-sdk/react";
 
 import { CHAINS } from "@lido-sdk/constants";
 import { getERC20Contract } from "@lido-sdk/contracts";
 import { getRpcProvider } from "@lido-sdk/providers";
 
 import { Button2 } from "../styles/components";
+import { formatDate } from "../utils";
 
 export const rpc = {
   [CHAINS.Mainnet]: process.env.NEXT_PUBLIC_SC_RPC_URL_1,
-  [4]: "https://bsc-dataseed.binance.org/"
+  [4]: "https://bsc-dataseed.binance.org/",
 };
 
 export default function Staking() {
-  const {account} = useWeb3();
+  const { account } = useWeb3();
 
-const contractAddress = "0xf72Cabed72b3936E0F952b5E96a5d95A4Ec776DF";
-const providerRpc = getRpcProvider(CHAINS.Mainnet, rpc[CHAINS.Mainnet]);
+  const contractAddress = "0xf72Cabed72b3936E0F952b5E96a5d95A4Ec776DF";
+  const providerRpc = getRpcProvider(CHAINS.Mainnet, rpc[CHAINS.Mainnet]);
 
-const straddleContract = getERC20Contract(
-  "0xf72Cabed72b3936E0F952b5E96a5d95A4Ec776DF",
-  providerRpc
-);
+  const straddleContract = getERC20Contract(
+    "0xf72Cabed72b3936E0F952b5E96a5d95A4Ec776DF",
+    providerRpc
+  );
 
-
-const contractRpc = getERC20Contract(contractAddress, providerRpc);
+  const contractRpc = getERC20Contract(contractAddress, providerRpc);
 
   const [balance, setBalance] = useState<number>();
-  const [userLocks, setUserLocks] = useState<any>();
+
+  // TODO: This is a dummy value, need to remove this when Connect Wallet error fixes
+  const [userLocks, setUserLocks] = useState<any>([
+    {
+      startTime: "1650659103",
+      endTime: "1650659103",
+      stakedAmount: 1,
+      tier: 0,
+    },
+    {
+      startTime: 1650659103,
+      endTime: 1650659103,
+      stakedAmount: 1,
+      tier: 0,
+    },
+  ]);
   const [selectedTier, setSelectedTier] = useState<number>(0);
   const [selectedAmount, setSelectedAmount] = useState<number>(0);
   const [createDepositLoading, setCreateDepositLoading] = useState<boolean>(
     false
   );
 
+  const [userLockedBalance, setUserLockedBalance] = useState();
 
+  useEffect(() => {
+    if (account) {
+      try {
+        const contract = new ethers.Contract(
+          contractAddress,
+          abi.abi,
+          providerRpc.getSigner()
+        );
+        const fetchData = async () => {
+          const balance = await contract.getUserLockedBalance(account);
+          const userLocks = await contract.getUserLocks(account);
+          console.log("balance: ", balance);
+          console.log("userLocks: ", userLocks);
+          setUserLocks(userLocks);
+          setUserLockedBalance(balance);
+        };
+        fetchData();
+      } catch (error) {
+        console.log("Error while fetching user locked balance", error);
+      }
+    }
+  }, [account, providerRpc]);
 
   const { data, loading } = useContractSWR({
-  contract: contractRpc,
-  method: "balanceOf",
-  params: [account],
-});
+    contract: contractRpc,
+    method: "balanceOf",
+    params: ["0xcc626cE857cCb909427845aBA0c59445C75Ea5a2"],
+  });
+
+  console.log("data", data);
 
   useEffect(() => {
     console.log("selectedAmount", selectedAmount);
@@ -76,24 +123,24 @@ const contractRpc = getERC20Contract(contractAddress, providerRpc);
 
   const createDeposit = async () => {
     setCreateDepositLoading(true);
-    // if (!account) {
-    //   alert("Connect wallet to create Deposit");
-    //   return;
-    // }
+    if (!account) {
+      alert("Connect wallet to create Deposit");
+      return;
+    }
     const { ethereum } = window;
     if (ethereum) {
       try {
-        // const contract = new ethers.Contract(
-        //   contractAddress,
-        //   abi.abi,
-        //   signer
-        // );
-        // // await contract.approve(contractAddress, ethers.constants.MaxUint256.toString())
+        const contract = new ethers.Contract(
+          contractAddress,
+          abi.abi,
+          providerRpc.getSigner()
+        );
+        // await contract.approve(contractAddress, ethers.constants.MaxUint256.toString())
 
-        // const deposit = await contract.deposit(selectedAmount, selectedTier, {
-        //   gasLimit: 1000000,
-        // });
-        // await deposit.wait();
+        const deposit = await contract.deposit(selectedAmount, selectedTier, {
+          gasLimit: 1000000,
+        });
+        await deposit.wait();
         setCreateDepositLoading(false);
         alert("Deposit created successfully");
       } catch (error) {
@@ -220,9 +267,12 @@ const contractRpc = getERC20Contract(contractAddress, providerRpc);
         fontFamily="monospace"
         fontSize="12.5px"
       >
-        <Flex ml="20px" textAlign="center">
+        <Flex flexDirection="column" ml="20px" textAlign="left">
           <Text>
             Wallet Balance: {balance} <b>STRAD</b>
+          </Text>
+          <Text>
+            User Locked Balance: {userLockedBalance} <b>STRAD</b>
           </Text>
         </Flex>
       </Box>
@@ -237,8 +287,35 @@ const contractRpc = getERC20Contract(contractAddress, providerRpc);
           <Text textAlign="center" fontSize="12.5px" mb="15px">
             You have no past or present deposits.
           </Text>
-          {/* TODO: want to put a table in here that displays all the user's locks, past and present */}
         </div>
+
+        {userLocks.length !== 0 && (
+          <TableContainer>
+            <Table variant="simple">
+              <Thead>
+                <Tr>
+                  <Th>Start Time</Th>
+                  <Th>End Time</Th>
+                  <Th>Staked Amount</Th>
+                  <Th>Tier</Th>
+                </Tr>
+              </Thead>
+              <Tbody>
+                {userLocks.map((bal, index) => {
+                  console.log(bal);
+                  return (
+                    <Tr key={index}>
+                      <Td>{formatDate(bal.startTime)}</Td>
+                      <Td>{formatDate(bal.endTime)}</Td>
+                      <Td>{bal.stakedAmount}</Td>
+                      <Td>{bal.tier}</Td>
+                    </Tr>
+                  );
+                })}
+              </Tbody>
+            </Table>
+          </TableContainer>
+        )}
       </Box>
     </div>
   );

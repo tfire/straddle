@@ -17,7 +17,7 @@ import {
 import { JsonRpcProvider } from "@ethersproject/providers";
 import { useLDOContractWeb3 } from "@lido-sdk/react";
 import { ProviderWeb3, useWeb3 } from "@lido-sdk/web3-react";
-import { ethers } from "ethers";
+import { ethers, utils } from "ethers";
 import { useState, useEffect } from "react";
 
 import abi from "../public/abis/straddle-abi.json";
@@ -40,7 +40,11 @@ export default function Staking() {
   const { account } = useWeb3();
 
   const contractAddress = "0xf72Cabed72b3936E0F952b5E96a5d95A4Ec776DF";
-  const providerRpc = getRpcProvider(CHAINS.Mainnet, rpc[CHAINS.Mainnet]);
+  const stradTokenAddress = "0x89ea25623916c28A988f8FAeB6B19Ce9CbBC01d5";
+  const providerRpc = getRpcProvider(
+    CHAINS.Rinkeby,
+    `https://rinkeby.infura.io/v3/${process.env.NEXT_PUBLIC_INFURA_API_KEY}`
+  );
 
   const straddleContract = getERC20Contract(
     "0xf72Cabed72b3936E0F952b5E96a5d95A4Ec776DF",
@@ -50,22 +54,8 @@ export default function Staking() {
   const contractRpc = getERC20Contract(contractAddress, providerRpc);
 
   const [balance, setBalance] = useState<number>();
-
-  // TODO: This is a dummy value, need to remove this when Connect Wallet error fixes
-  const [userLocks, setUserLocks] = useState<any>([
-    {
-      startTime: "1650659103",
-      endTime: "1650659103",
-      stakedAmount: 1,
-      tier: 0,
-    },
-    {
-      startTime: 1650659103,
-      endTime: 1650659103,
-      stakedAmount: 1,
-      tier: 0,
-    },
-  ]);
+  const [fetchingData, setFetchingData] = useState(false);
+  const [userLocks, setUserLocks] = useState<any>();
   const [selectedTier, setSelectedTier] = useState<number>(0);
   const [selectedAmount, setSelectedAmount] = useState<number>(0);
   const [createDepositLoading, setCreateDepositLoading] = useState<boolean>(
@@ -76,23 +66,26 @@ export default function Staking() {
 
   useEffect(() => {
     if (account) {
+      setFetchingData(true);
       try {
         const contract = new ethers.Contract(
           contractAddress,
           abi.abi,
-          providerRpc.getSigner()
+          providerRpc
         );
         const fetchData = async () => {
           const balance = await contract.getUserLockedBalance(account);
           const userLocks = await contract.getUserLocks(account);
-          console.log("balance: ", balance);
-          console.log("userLocks: ", userLocks);
+
           setUserLocks(userLocks);
-          setUserLockedBalance(balance);
+
+          setUserLockedBalance(balance?.toString());
         };
         fetchData();
+        setFetchingData(false);
       } catch (error) {
         console.log("Error while fetching user locked balance", error);
+        setFetchingData(false);
       }
     }
   }, [account, providerRpc]);
@@ -102,12 +95,6 @@ export default function Staking() {
     method: "balanceOf",
     params: ["0xcc626cE857cCb909427845aBA0c59445C75Ea5a2"],
   });
-
-  console.log("data", data);
-
-  useEffect(() => {
-    console.log("selectedAmount", selectedAmount);
-  }, [selectedAmount]);
 
   const handleTierSelect = (tier) => {
     setSelectedTier(tier);
@@ -130,16 +117,29 @@ export default function Staking() {
     const { ethereum } = window;
     if (ethereum) {
       try {
+        const provider = new ethers.providers.Web3Provider(ethereum);
         const contract = new ethers.Contract(
           contractAddress,
           abi.abi,
-          providerRpc.getSigner()
+          provider.getSigner()
         );
-        // await contract.approve(contractAddress, ethers.constants.MaxUint256.toString())
+        const stradTokenContract = getERC20Contract(
+          stradTokenAddress,
+          provider.getSigner()
+        );
 
-        const deposit = await contract.deposit(selectedAmount, selectedTier, {
-          gasLimit: 1000000,
-        });
+        await stradTokenContract.approve(
+          contractAddress,
+          ethers.constants.MaxUint256.toString()
+        );
+
+        const deposit = await contract.deposit(
+          utils.parseEther(selectedAmount.toString()),
+          selectedTier,
+          {
+            gasLimit: 1000000,
+          }
+        );
         await deposit.wait();
         setCreateDepositLoading(false);
         alert("Deposit created successfully");
@@ -268,12 +268,19 @@ export default function Staking() {
         fontSize="12.5px"
       >
         <Flex flexDirection="column" ml="20px" textAlign="left">
-          <Text>
+          {/* <Text>
             Wallet Balance: {balance} <b>STRAD</b>
-          </Text>
-          <Text>
-            User Locked Balance: {userLockedBalance} <b>STRAD</b>
-          </Text>
+          </Text> */}
+          <Flex gap={2}>
+            User Locked Balance:{" "}
+            {fetchingData ? (
+              "loading..."
+            ) : (
+              <Flex gap={2}>
+                {userLockedBalance} <b>STRAD</b>
+              </Flex>
+            )}
+          </Flex>
         </Flex>
       </Box>
 
@@ -283,13 +290,8 @@ export default function Staking() {
         <Text textAlign="center" fontSize="15.5px" fontWeight="bold" mt="5px">
           HISTORY
         </Text>
-        <div>
-          <Text textAlign="center" fontSize="12.5px" mb="15px">
-            You have no past or present deposits.
-          </Text>
-        </div>
 
-        {userLocks.length !== 0 && (
+        {userLocks && userLocks.length !== 0 ? (
           <TableContainer>
             <Table variant="simple">
               <Thead>
@@ -302,19 +304,26 @@ export default function Staking() {
               </Thead>
               <Tbody>
                 {userLocks.map((bal, index) => {
-                  console.log(bal);
                   return (
                     <Tr key={index}>
-                      <Td>{formatDate(bal.startTime)}</Td>
-                      <Td>{formatDate(bal.endTime)}</Td>
-                      <Td>{bal.stakedAmount}</Td>
-                      <Td>{bal.tier}</Td>
+                      <Td>{formatDate(bal.startTime.toString())}</Td>
+                      <Td>{formatDate(bal.endTime.toString())}</Td>
+                      <Td>{bal.stakedAmount.toString()}</Td>
+                      <Td>{bal.tier.toString()}</Td>
                     </Tr>
                   );
                 })}
               </Tbody>
             </Table>
           </TableContainer>
+        ) : fetchingData ? (
+          <Text textAlign="center" fontSize="12.5px" mb="15px">
+            loading...
+          </Text>
+        ) : (
+          <Text textAlign="center" fontSize="12.5px" mb="15px">
+            You have no past or present deposits.
+          </Text>
         )}
       </Box>
     </div>

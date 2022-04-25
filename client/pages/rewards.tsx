@@ -6,12 +6,16 @@ import abi from "../public/abis/straddle-abi.json";
 import { getRpcProvider } from "@lido-sdk/providers";
 import { CHAINS } from "@lido-sdk/constants";
 import { rpc } from "./staking";
+import { Flex } from "@chakra-ui/react";
 
 export default function Rewards() {
   const { account } = useWeb3();
   const [claimLoading, setClaimLoading] = useState(false);
   const contractAddress = "0xf72Cabed72b3936E0F952b5E96a5d95A4Ec776DF";
-  const providerRpc = getRpcProvider(CHAINS.Mainnet, rpc[CHAINS.Mainnet]);
+  const providerRpc = getRpcProvider(
+    CHAINS.Rinkeby,
+    `https://rinkeby.infura.io/v3/${process.env.NEXT_PUBLIC_INFURA_API_KEY}`
+  );
 
   const [balance, setBalance] = useState();
   const [rewardsClaimed, setRewardsClaimed] = useState();
@@ -20,15 +24,19 @@ export default function Rewards() {
     const fetchBalance = async () => {
       if(account) {
         try {
+          const { ethereum } = window;
+          const provider = new ethers.providers.Web3Provider(ethereum);
           const contract = new ethers.Contract(
             contractAddress,
             abi.abi,
-            providerRpc.getSigner()
+            provider.getSigner()
           );
 
-          const userAccount = await contract.userAccounts(account);
-          setBalance(userAccount?.balance);
-          setRewardsClaimed(userAccount?.rewardsClaimed);
+          const userAccounts = await contract.userAccounts(account);
+          console.log('userAccounts: ', userAccounts);
+          // console.log('balance: ',balance);
+          setBalance(userAccounts[0]?.toString());
+          setRewardsClaimed(userAccounts[1]?.toString());
 
         } catch (error) {
           console.log('Error while fetching userBalance', error);
@@ -47,10 +55,11 @@ export default function Rewards() {
     const { ethereum } = window;
     if (ethereum) {
       try {
+        const provider = new ethers.providers.Web3Provider(ethereum);
         const contract = new ethers.Contract(
           contractAddress,
           abi.abi,
-          providerRpc.getSigner()
+          provider.getSigner()
         );
         // await contract.approve(contractAddress, ethers.constants.MaxUint256.toString())
 
@@ -75,14 +84,16 @@ export default function Rewards() {
 
       <div id="rewards-view-container">
         <div>
-          <b>BALANCE</b>
-          <p>{balance}</p>
+          <Flex gap={2}>
+          <b>BALANCE: </b>
+          <p>{balance} Strad</p>
+          </Flex>
           <Button onClick={claimRewards}>Claim</Button>
         </div>
-        <div>
+        <Flex gap={2}>
           <b>PAST</b>
           <p>{rewardsClaimed}</p>
-        </div>
+          </Flex>
       </div>
     </div>
   );

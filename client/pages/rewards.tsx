@@ -22,7 +22,7 @@ export default function Rewards() {
 
   useEffect(() => {
     const fetchBalance = async () => {
-      if(account) {
+      if (account) {
         try {
           const { ethereum } = window;
           const provider = new ethers.providers.Web3Provider(ethereum);
@@ -33,16 +33,15 @@ export default function Rewards() {
           );
 
           const userAccounts = await contract.userAccounts(account);
-          console.log('userAccounts: ', userAccounts);
+          console.log("userAccounts: ", userAccounts);
           // console.log('balance: ',balance);
           setBalance(userAccounts[0]?.toString());
           setRewardsClaimed(userAccounts[1]?.toString());
-
         } catch (error) {
-          console.log('Error while fetching userBalance', error);
-        } 
+          console.log("Error while fetching userBalance", error);
+        }
       }
-    }
+    };
     fetchBalance();
   }, [account, providerRpc]);
 
@@ -85,15 +84,17 @@ export default function Rewards() {
       <div id="rewards-view-container">
         <div>
           <Flex gap={2}>
-          <b>BALANCE: </b>
-          <p>{balance} Strad</p>
+            <b>BALANCE: </b>
+            <p>{balance} Strad</p>
           </Flex>
-          <Button onClick={claimRewards}>Claim</Button>
+          <Button disabled={claimLoading} onClick={claimRewards}>
+            {claimLoading ? "Loading..." : "Claim"}
+          </Button>
         </div>
         <Flex gap={2}>
           <b>PAST</b>
           <p>{rewardsClaimed}</p>
-          </Flex>
+        </Flex>
       </div>
     </div>
   );

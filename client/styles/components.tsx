@@ -57,6 +57,7 @@ export const Button = styled.button`
     border: none;
     outline: none;
   }
+  ${({disabled}) => disabled && "pointer-events: none; cursor: not-allowed!important;"} 
 `;
 
 export const Button2 = styled.button`
@@ -72,6 +73,7 @@ export const Button2 = styled.button`
   font-size: 12.5px;
   padding: 1px 6px;
   margin-left: 5px !important;
+  ${({disabled}) => disabled && "pointer-events: none; cursor: not-allowed!important;"} 
 `;
 
 export const Modal = styled.div`

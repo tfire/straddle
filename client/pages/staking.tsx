@@ -109,7 +109,7 @@ export default function Staking() {
   };
 
   const createDeposit = async () => {
-    if (createDepositLoading) return;
+
     setCreateDepositLoading(true);
     if (!account) {
       alert("Connect wallet to create Deposit");

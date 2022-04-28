@@ -109,6 +109,7 @@ export default function Staking() {
   };
 
   const createDeposit = async () => {
+    if (createDepositLoading) return;
     setCreateDepositLoading(true);
     if (!account) {
       alert("Connect wallet to create Deposit");
@@ -256,7 +257,9 @@ export default function Staking() {
             <p>months</p>
             <a>?</a>
           </Box>
-          <Button2 onClick={createDeposit}>CREATE</Button2>
+          <Button2 disabled={createDepositLoading} onClick={createDeposit}>
+            {createDepositLoading ? "Loading..." : "CREATE"}
+          </Button2>
         </Flex>
       </Flex>
       <Box

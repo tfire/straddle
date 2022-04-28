@@ -34,10 +34,10 @@ export default function ConnectWalletModal({
 
   return (
     <Modal isOpen={isOpenModal} onClose={closeModal}>
-      <ModalContent>
+      <ModalContent color="black" background="white">
         <ModalBody>
           {!account ? (
-            <Stack gap={2}>
+            <Stack color="black" background="white" gap={2}>
               <Button
                 onClick={async () => {
                   if (window.ethereum) {

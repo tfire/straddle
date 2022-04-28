@@ -74,19 +74,20 @@ export default function NetworkSelectionModal({ switchToggle }) {
         isCentered
       >
         <ModalOverlay filter="auto" blur="1rem" />
-        <ModalContent>
-          <ModalHeader>
-            <Heading variant="medium">Switch Network</Heading>
+        <ModalContent color="black" background="white" justifyContent="center">
+          <ModalHeader  color="black" textAlign="center">
+            <Text  color="black" fontSize="xl" variant="medium">
+              Switch Network
+            </Text>
           </ModalHeader>
           <ModalCloseButton
             _focus={{ boxShadow: "none" }}
             onClick={switchToggle.onClose}
           />
 
-          <ModalBody
-            py={8}
+          <ModalBody  color="black"
             borderTop="solid 1px"
-            borderColor={colorMode === "dark" ? "#232323" : "#F3F3F3"}
+            // borderColor={colorMode === "dark" ? "#232323" : "#F3F3F3"}
           >
             {wasCanceled ? (
               "You canceled the chain request"
@@ -95,25 +96,28 @@ export default function NetworkSelectionModal({ switchToggle }) {
                 <Button
                   variant="ghost"
                   w="100%"
-                  h="56px"
-                  justifyContent="left"
+                  h="46px"
+                  justifyContent="center"
+                  fontSize="xl"
+                  textAlign="center"
+                  color="black"
                   onClick={() => {
                     switchingStarted("0x4");
                   }}
                 >
-                  <Heading variant="small">Rinkeby</Heading>
+                  Rinkeby
                 </Button>
               </Stack>
             )}
           </ModalBody>
-          <ModalFooter justifyContent="center">
+          {/* <ModalFooter justifyContent="center">
             <DisconnectWallet
               onClick={async () => {
                 switchToggle.onClose;
                 await disconnect();
               }}
             />
-          </ModalFooter>
+          </ModalFooter> */}
         </ModalContent>
       </Modal>
 
@@ -124,9 +128,9 @@ export default function NetworkSelectionModal({ switchToggle }) {
         isCentered
       >
         <ModalOverlay filter="auto" blur="1rem" />
-        <ModalContent>
+        <ModalContent background='white'>
           <ModalHeader>
-            <Heading variant="medium">Connecting...</Heading>
+            <Heading color="black" variant="medium">Connecting...</Heading>
           </ModalHeader>
           <ModalCloseButton
             _focus={{ boxShadow: "none" }}
@@ -138,14 +142,13 @@ export default function NetworkSelectionModal({ switchToggle }) {
             borderTop="solid 1px"
             borderColor={colorMode === "dark" ? "#232323" : "#F3F3F3"}
           >
-            <Button
+            <Button color="black"
               variant={"ghost"}
               w="100%"
-              h="56px"
               justifyContent="space-between"
               rightIcon={<Spinner />}
             >
-              <Text>Switching to another chain...</Text>
+              <Text color={"black"}>Switching to another chain...</Text>
             </Button>
           </ModalBody>
         </ModalContent>

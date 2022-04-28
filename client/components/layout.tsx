@@ -1,6 +1,7 @@
 import {
   Box,
   Button,
+  Container,
   Flex,
   Link,
   Stack,
@@ -156,17 +157,21 @@ const Layout = ({ children }) => {
           {children}
         </Stack>
       )}
-      {!isWrongNetwork && !account && <Text>Connect Wallet to continue</Text>}
+      {!isWrongNetwork && !account && (
+        <Text textAlign="center" mt={10} fontWeight="bold" fontSize="3xl">
+          Connect Wallet to continue
+        </Text>
+      )}
       {isWrongNetwork && (
-        <Box>
+        <Container textAlign="center" fontSize="3xl" fontWeight="bold" mt={10}>
           <Text>
-            You&apos;re connected to the wrong network. Please switch to the
-            network.
+            You&apos;re connected to the wrong network. Please switch network to
+            continue.
           </Text>
-          <Button onClick={switchToggle.onOpen} variant="primary">
+          <Button fontSize="xl" onClick={switchToggle.onOpen} variant="primary">
             Switch Network
           </Button>
-        </Box>
+        </Container>
       )}
       {switchToggle.isOpen && (
         <NetworkSelectionModal switchToggle={switchToggle} />

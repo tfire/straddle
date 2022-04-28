@@ -1,17 +1,20 @@
 import {
   Box,
   Button,
-  Flex, Link, Stack, Text,
-  useDisclosure
+  Flex,
+  Link,
+  Stack,
+  Text,
+  useDisclosure,
 } from "@chakra-ui/react";
-import { useWeb3 } from "@lido-sdk/web3-react";
+import { UnsupportedChainIdError, useWeb3 } from "@lido-sdk/web3-react";
 import { ethers } from "ethers";
 import Head from "next/head";
 import { useRouter } from "next/router";
 import React, { useEffect, useState } from "react";
 import styles from "../styles/Home.module.css";
 import ConnectWalletModal from "./connectWalletModal";
-
+import NetworkSelectionModal from "./networkSelectionModal";
 
 const Layout = ({ children }) => {
   const {
@@ -20,11 +23,13 @@ const Layout = ({ children }) => {
     onClose: onCloseModal,
   } = useDisclosure();
 
-  const { account } = useWeb3();
+  const { account, error } = useWeb3();
   const [name, setName] = useState<string>("");
   const provider = ethers.providers.getDefaultProvider();
+  const switchToggle = useDisclosure();
 
   const router = useRouter();
+  const isWrongNetwork = !!error && error instanceof UnsupportedChainIdError;
 
   useEffect(() => {
     const getName = async () => {
@@ -67,15 +72,27 @@ const Layout = ({ children }) => {
         <Text fontSize="14px" variant="medium">
           ⚖️ Straddle.Finance
         </Text>
-        <Button
-          variant="primary"
-          onClick={() => {
-            openModal();
-            console.log("connect wallet");
-          }}
-        >
-          {name ? name : "Connect Wallet"}
-        </Button>
+        {!isWrongNetwork && !account && (
+          <Button
+            variant="primary"
+            onClick={() => {
+              openModal();
+              console.log("connect wallet");
+            }}
+          >
+            Connect Wallet
+          </Button>
+        )}
+        {isWrongNetwork && (
+          <Button variant="primary" onClick={switchToggle.onOpen}>
+            Switch Network
+          </Button>
+        )}
+        {account && !isWrongNetwork && (
+          <Button variant="primary" onClick={openModal}>
+            {name}
+          </Button>
+        )}
       </Flex>
 
       <Flex
@@ -128,16 +145,32 @@ const Layout = ({ children }) => {
           </Button>
         </Flex>
       </Flex>
-
-      <Stack
-        borderWidth="2px"
-        borderStyle="dashed"
-        borderColor="white"
-        p={2}
-        mt={2}
-      >
-        {children}
-      </Stack>
+      {account && (
+        <Stack
+          borderWidth="2px"
+          borderStyle="dashed"
+          borderColor="white"
+          p={2}
+          mt={2}
+        >
+          {children}
+        </Stack>
+      )}
+      {!isWrongNetwork && !account && <Text>Connect Wallet to continue</Text>}
+      {isWrongNetwork && (
+        <Box>
+          <Text>
+            You&apos;re connected to the wrong network. Please switch to the
+            network.
+          </Text>
+          <Button onClick={switchToggle.onOpen} variant="primary">
+            Switch Network
+          </Button>
+        </Box>
+      )}
+      {switchToggle.isOpen && (
+        <NetworkSelectionModal switchToggle={switchToggle} />
+      )}
     </Box>
   );
 };

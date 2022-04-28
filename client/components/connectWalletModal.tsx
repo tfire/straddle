@@ -38,27 +38,33 @@ export default function ConnectWalletModal({
         <ModalBody>
           {!account ? (
             <Stack gap={2}>
-              <Button onClick={() =>
-                {if (window.ethereum) {
-                metamask.connect()
-              } else {
-                console.log("no metamask")
-              }}}>
+              <Button
+                onClick={async () => {
+                  if (window.ethereum) {
+                    await metamask.connect();
+                    closeModal();
+                  } else {
+                    console.log("no metamask");
+                  }
+                }}
+              >
                 Connect with Metamask
               </Button>
               <Button onClick={walletconnect.connect}>
                 Connect with WalletConnect
               </Button>
-              <Button onClick={coinbase.connect}>
-                Connect with Coinbase
-              </Button>
-              <Button onClick={trust.connect}>
-                Connect with TrustWallet
-              </Button>
+              <Button onClick={coinbase.connect}>Connect with Coinbase</Button>
+              <Button onClick={trust.connect}>Connect with TrustWallet</Button>
             </Stack>
           ) : (
             <Stack gap={2}>
-              <Button m="auto" onClick={() => disconnect()}>
+              <Button
+                m="auto"
+                onClick={async () => {
+                  await disconnect();
+                  closeModal();
+                }}
+              >
                 Disconnect
               </Button>
             </Stack>

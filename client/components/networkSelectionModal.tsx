@@ -1,4 +1,4 @@
-import React, {useState} from "react";
+import React, { useState } from "react";
 
 import {
   Modal,
@@ -15,50 +15,42 @@ import {
   Text,
   Spinner,
   useColorMode,
-  useDisclosure
+  useDisclosure,
 } from "@chakra-ui/react";
 
-import {useWeb3} from "@lido-sdk/web3-react";
-import {
-  useDisconnect
-} from "@lido-sdk/web3-react";
+import { useDisconnect, useWeb3 } from "@lido-sdk/web3-react";
 import { DisconnectWallet } from "./WalletSelection";
 
-
-
-export default function NetworkSelectionModal({switchToggle}) {
-  const {chainId, connector} = useWeb3();
-  const {disconnect} = useDisconnect();
+export default function NetworkSelectionModal({ switchToggle }) {
+  const { chainId, connector } = useWeb3();
+  const { disconnect } = useDisconnect();
 
   const switchNetwork = async (chain: string) => {
+    if (chain && chainId && chain === chainId.toString()) return;
 
-     if (chain && chainId && chain === chainId.toString()) return;
+    let ethereum = window.ethereum;
 
-     let ethereum = window.ethereum;
-
-          try {
-
-            if (ethereum) {
-              // @ts-expect-error
-              await ethereum.request({
-                method: "wallet_switchEthereumChain",
-                params: [{ chainId: `${chain}` }],
-              });
-            } else {
-              await (connector as any).activate(chain);
-            }
-
-          } catch (error) {
-            console.error(error);
-
-            alert('Error while switching network');
-
-            if (error === 4001) {
-              setCanceled(true);
-              switching.onClose();
-            }
-          }
+    try {
+      if (ethereum) {
+        // @ts-expect-error
+        await ethereum.request({
+          method: "wallet_switchEthereumChain",
+          params: [{ chainId: `${chain}` }],
+        });
+      } else {
+        await (connector as any).activate(chain);
       }
+    } catch (error) {
+      console.error(error);
+
+      alert("Error while switching network");
+
+      if (error === 4001) {
+        setCanceled(true);
+        switching.onClose();
+      }
+    }
+  };
 
   const { colorMode } = useColorMode();
 
@@ -68,72 +60,84 @@ export default function NetworkSelectionModal({switchToggle}) {
 
   const switchingStarted = async (chain: string) => {
     switching.onOpen();
-    await switchNetwork(chain)
+    await switchNetwork(chain);
     switchToggle.onClose();
     switching.onClose();
   };
 
   return (
     <>
-    <Modal size="sm" isOpen={switchToggle.isOpen} onClose={switchToggle.onClose} isCentered>
-      <ModalOverlay filter="auto" blur="1rem" />
-      <ModalContent>
-        <ModalHeader>
-          <Heading variant="medium">Switch Network</Heading>
-        </ModalHeader>
-        <ModalCloseButton _focus={{ boxShadow: "none" }} onClick={switchToggle.onClose} />
+      <Modal
+        size="sm"
+        isOpen={switchToggle.isOpen}
+        onClose={switchToggle.onClose}
+        isCentered
+      >
+        <ModalOverlay filter="auto" blur="1rem" />
+        <ModalContent>
+          <ModalHeader>
+            <Heading variant="medium">Switch Network</Heading>
+          </ModalHeader>
+          <ModalCloseButton
+            _focus={{ boxShadow: "none" }}
+            onClick={switchToggle.onClose}
+          />
 
-        <ModalBody
-          py={8}
-          borderTop="solid 1px"
-          borderColor={colorMode === "dark" ? "#232323" : "#F3F3F3"}
-        >
-        {wasCanceled ? "You canceled the chain request" :
-          <Stack>
-            <Button
-              variant="ghost"
-              w="100%"
-              h="56px"
-              justifyContent="left"
-              onClick={() =>  {
-                switchingStarted("0x4");
-              }
-              }
-            >
-              <Heading variant='small'>
-              Rinkeby
-              </Heading>
-            </Button>
+          <ModalBody
+            py={8}
+            borderTop="solid 1px"
+            borderColor={colorMode === "dark" ? "#232323" : "#F3F3F3"}
+          >
+            {wasCanceled ? (
+              "You canceled the chain request"
+            ) : (
+              <Stack>
+                <Button
+                  variant="ghost"
+                  w="100%"
+                  h="56px"
+                  justifyContent="left"
+                  onClick={() => {
+                    switchingStarted("0x4");
+                  }}
+                >
+                  <Heading variant="small">Rinkeby</Heading>
+                </Button>
+              </Stack>
+            )}
+          </ModalBody>
+          <ModalFooter justifyContent="center">
+            <DisconnectWallet
+              onClick={async () => {
+                switchToggle.onClose;
+                await disconnect();
+              }}
+            />
+          </ModalFooter>
+        </ModalContent>
+      </Modal>
 
-          </Stack>
-        }
-        </ModalBody>
-        <ModalFooter justifyContent="center">
-          <DisconnectWallet onClick={() => {
-            switchToggle.onClose;
-            disconnect();}}/>
-        </ModalFooter>
-      </ModalContent>
-    </Modal>
+      <Modal
+        size="sm"
+        isOpen={switching?.isOpen}
+        onClose={switching?.onClose}
+        isCentered
+      >
+        <ModalOverlay filter="auto" blur="1rem" />
+        <ModalContent>
+          <ModalHeader>
+            <Heading variant="medium">Connecting...</Heading>
+          </ModalHeader>
+          <ModalCloseButton
+            _focus={{ boxShadow: "none" }}
+            onClick={switching && switching.onClose}
+          />
 
-    <Modal
-      size="sm"
-      isOpen={switching?.isOpen}
-      onClose={switching?.onClose}
-      isCentered
-    >
-      <ModalOverlay filter="auto" blur="1rem" />
-      <ModalContent>
-        <ModalHeader>
-          <Heading variant="medium">Connecting...</Heading>
-        </ModalHeader>
-        <ModalCloseButton _focus={{ boxShadow: "none" }} onClick={switching && switching.onClose}/>
-
-        <ModalBody
-          py={8}
-          borderTop="solid 1px"
-          borderColor={colorMode === "dark" ? "#232323" : "#F3F3F3"}
-        >
+          <ModalBody
+            py={8}
+            borderTop="solid 1px"
+            borderColor={colorMode === "dark" ? "#232323" : "#F3F3F3"}
+          >
             <Button
               variant={"ghost"}
               w="100%"
@@ -141,13 +145,11 @@ export default function NetworkSelectionModal({switchToggle}) {
               justifyContent="space-between"
               rightIcon={<Spinner />}
             >
-              <Text>
-                Switching to another chain...
-              </Text>
+              <Text>Switching to another chain...</Text>
             </Button>
-        </ModalBody>
-      </ModalContent>
-    </Modal>
+          </ModalBody>
+        </ModalContent>
+      </Modal>
     </>
   );
 }

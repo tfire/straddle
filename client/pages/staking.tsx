@@ -131,7 +131,7 @@ export default function Staking() {
 
         await stradTokenContract.approve(
           contractAddress,
-          ethers.constants.MaxUint256.toString()
+          utils.parseEther(selectedAmount.toString())
         );
 
         const deposit = await contract.deposit(

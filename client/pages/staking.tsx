@@ -39,8 +39,8 @@ export const rpc = {
 export default function Staking() {
   const { account } = useWeb3();
 
-  const contractAddress = "0xf72Cabed72b3936E0F952b5E96a5d95A4Ec776DF";
-  const stradTokenAddress = "0x89ea25623916c28A988f8FAeB6B19Ce9CbBC01d5";
+  const contractAddress = "0x89ea25623916c28A988f8FAeB6B19Ce9CbBC01d5";
+
   const providerRpc = getRpcProvider(
     CHAINS.Rinkeby,
     `https://rinkeby.infura.io/v3/${process.env.NEXT_PUBLIC_INFURA_API_KEY}`
@@ -125,7 +125,7 @@ export default function Staking() {
           provider.getSigner()
         );
         const stradTokenContract = getERC20Contract(
-          stradTokenAddress,
+          contractAddress,
           provider.getSigner()
         );
 

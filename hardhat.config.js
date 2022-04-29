@@ -26,6 +26,7 @@ if (process.env.ALCHEMY_TOKEN === undefined) {
  */
 module.exports = {
   solidity: "0.8.4",
+  defaultNetwork: "rinkeby",
   networks: {
     hardhat: {
       forking: {
@@ -34,8 +35,21 @@ module.exports = {
         blockNumber: 14317380,
       },
     },
+    rinkeby: {
+      url: `https://rinkeby.infura.io/v3/${process.env.INFURA_API_KEY}`,
+      accounts: [process.env.PRIVATE_KEY],
+    }
   },
   gasReporter: {
     enabled: true,
   },
+  paths: {
+    sources: "./contracts",
+    tests: "./test",
+    cache: "./cache",
+    artifacts: "./artifacts"
+  },
+  mocha: {
+    timeout: 40000
+  }
 };
